@@ -1,15 +1,16 @@
 version: '3'
 services:
-  # redis:
-  #   image: redis:latest
-
-  # mongo:
-  #   image: mongo:latest
+  redis:
+    image: redis:latest
 
   web:
+    volumes:
+      - .:/liga
     build:
       context: .
       dockerfile: Dockerfile
+    depends_on:
+      - redis
     command: node server.js
     ports:
       - "8080:8080"
