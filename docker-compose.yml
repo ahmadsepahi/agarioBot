@@ -1,0 +1,15 @@
+version: '3'
+services:
+  # redis:
+  #   image: redis:latest
+
+  # mongo:
+  #   image: mongo:latest
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: node server.js
+    ports:
+      - "8080:8080"
