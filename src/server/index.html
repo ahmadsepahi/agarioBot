@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+  <head>
+    <title>AgarIO clone</title>
+    <link rel="stylesheet" type="text/css" href="index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism-okaidia.min.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/prism.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+    <script>
+      var uuid = null;
+      var socket = io();
+      io.on('assign uuid', (msg) => {
+        uuid = msg.uuid;
+      });
+
+      let x = 0;
+      let y = 0;
+
+      socket.emit('move', {x: x, y: y, uuid: uuid});
+      socket.on('update map', (msg) => {
+        console.log(`Map must be updated with params uuid=${msg.uuid}, x=${msg.x}, y=${msg.y}`);
+      })
+    </script>
+  </head>
+  <body>
+    <h1>Hello, agario!</h1>
+    <button>UP</button>
+    <button>DOWN</button>
+    <button>LEFT</button>
+    <button>RIGHT</button>
+
+  </body>
+</html>
