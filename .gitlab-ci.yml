@@ -1,0 +1,16 @@
+image: node:8.9.4
+
+cache:
+  paths:
+    - node_modules/
+
+stages:
+  - test
+
+init_test:
+  stage: test
+  scripts:
+    - npm install
+    - ./node_modules/mocha/bin/mocha
+  tags:
+    - docker
