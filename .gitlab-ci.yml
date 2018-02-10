@@ -9,7 +9,7 @@ stages:
 
 init_test:
   stage: test
-  scripts:
+  script:
     - npm install
     - ./node_modules/mocha/bin/mocha
   tags:
