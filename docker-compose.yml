@@ -3,14 +3,19 @@ services:
   redis:
     image: redis:latest
 
+  mongo:
+    image: mongo:latest
+    ports: 
+      - "27017:27017"
+
   web:
     volumes:
-      - .:/liga
+      - .:/agario
     build:
       context: .
       dockerfile: Dockerfile
     depends_on:
       - redis
-    command: node server.js
+    command: npm start
     ports:
       - "8080:8080"
