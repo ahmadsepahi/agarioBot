@@ -13,6 +13,7 @@ var config = require('../../config.json');
 // Import utilities.
 var util = require('./lib/util');
 
+app.use(express.static(__dirname + '/../client'));
 
 // SocketsHandler.connect(http, function(io, socket) {
 //   console.log('New user connected!', socket.handshake.query.type);
