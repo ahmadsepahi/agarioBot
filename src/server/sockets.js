@@ -2,9 +2,7 @@
 
 const socketio = require('socket.io')
 
-
 // const util = require('./lib/util');
-
 
 exports.connect = function(http, callback) {
     const io = socketio(http);
@@ -30,6 +28,7 @@ exports.handleAction = function(io, socket, currentPlayer) {
     });
 
     socket.on('respawn', function () {
+        console.log('kek');
     });
 
     socket.on('disconnect', function () {

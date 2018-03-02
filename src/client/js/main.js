@@ -1,12 +1,27 @@
+var io = require('socket.io-client');
+var Canvas = require('./canvas');
 var global = require('./global');
 var nameInput = document.getElementById('namePlayerInput');
+var socket;
+
+window.addEventListener('DOMContentLoaded', init);
 function validationName() {
     var regex = /^\w*$/;
     debug('Regex Test', regex.exec(nameInput.value));
     console.log(nameInput.value);
     return regex.exec(nameInput.value) !== null;
 }
-// nameInput.value.replace(/(<([^>]+)>)/ig, '').substring(0,30);
+function startGame() {
+    if(!socket) {
+        socket = io('http://localhost');
+        // setupSocket(socket);
+    }
+    console.log('test');
+    socket.on('respawn');
+}
+function init() {
+    startGame();
+}
 window.onload = function() {
     var btnStart = document.getElementById('butStart'),
     btnWatch = document.getElementById('butWatch'),
@@ -24,7 +39,4 @@ window.onload = function() {
                 }
             };
     var instructions = document.getElementById('rule');
-
-
-
 }
