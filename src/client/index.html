@@ -2,22 +2,14 @@
 <html>
   <head>
     <title>AgarIO clone</title>
-<<<<<<< HEAD
     <link rel="stylesheet" type="text/css" href="css/style.css">
-=======
->>>>>>> 1093d1e258e8934ba1258eccf66d1461d02d6ef1
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism-okaidia.min.css">
     <link rel="stylesheet" type="text/css" href="/css/app.css">
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/prism.min.js"></script>
-<<<<<<< HEAD
-    <script src="js/main.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
-    <!-- <script>
-=======
 
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
     <script>
->>>>>>> 1093d1e258e8934ba1258eccf66d1461d02d6ef1
       var uuid = null;
       var socket = io();
       io.on('assign uuid', (msg) => {
@@ -38,14 +30,16 @@
       <div id="MenuWr">
         
           <div id="menuStart">
-              <h2>AgarIO with Bots</h2>
+              <h2>AgarIO with Bots </h2>
               <input type="text" autofocus placeholder="Введите своё имя" id="namePlayerInput" maxlength="30"/>
               <b class="input-error">Имя должно состоять только из букв и цифр!</b>
               <button id="butStart">Играть</button>
-              <button id="butWatch">Наблюдать</button>
+              <button id="butWatch">Наблюдать</button><br>
+              <a href="#" id="main"><div id="rule"></div><i class="fa fa-question-circle" style="font-size:36px"></i></div></a>
+              
           </div>
         </div>
-
+        <a href="#" id="main">
         <div id="rule">
             <h3>Как играть</h3>
             <ul>
@@ -54,6 +48,7 @@
                 <li>Останься в живых.</li>
             </ul>
         </div>
+      </a>
     <!-- <h1>Hello, agario!</h1>
     <button>UP</button>
     <button>DOWN</button>

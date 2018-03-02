@@ -60,3 +60,22 @@ input[type="text"] {
         margin-bottom: 10px;
     
   }
+  #rule{
+    width: 300px;
+    height: 50px;
+    text-align: center;
+    padding: 15px;
+    border: 3px solid #0000cc;
+    border-radius: 10px;
+    color: #0000cc; 
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto; 
+  }
+  #rule:target {display: block;}
+  .help{
+      text-align: left;
+  }
