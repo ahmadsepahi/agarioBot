@@ -3,7 +3,7 @@
 const socketio = require('socket.io')
 
 
-const util = require('./lib/util');
+// const util = require('./lib/util');
 
 
 exports.connect = function(http, callback) {
