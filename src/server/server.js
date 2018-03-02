@@ -15,7 +15,6 @@ var util = require('./lib/util');
 app.use(express.static(__dirname + '/../client'));
 
 SocketsHandler.connect(http, function (io, socket) {
-    console.log(socket.handshake);
     console.log('New user connected!', socket.handshake.query.type);
 
     //   let type = socket.handshake.query.type;

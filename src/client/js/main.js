@@ -5,20 +5,15 @@ var socket;
 
 window.addEventListener('DOMContentLoaded', init);
 
-function startGame() {
+function startGame(type) {
     if (!socket) {
-        socket = io({query: 'type=alex'});
+        socket = io({
+            query: 'type=' + type
+        });
         // setupSocket(socket);
     }
-
-    socket.on('pongcheck', function (data) {
-        console.log(data, 'test');
-        socket.emit('respawn', {
-            my: 'data'
-        });
-    });
 }
 
 function init() {
-    startGame();
+    startGame('player');
 }
