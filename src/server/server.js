@@ -4,8 +4,6 @@ var express = require('express');
 var app = express();
 var http = require('http').Server(app);
 var SocketsHandler = require('./sockets');
-var SAT = require('sat');
-var sql = require ("mysql");
 
 // Import game settings.
 var c = require('../../config.json');
