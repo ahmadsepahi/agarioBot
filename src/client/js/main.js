@@ -5,18 +5,17 @@ var nameInput = document.getElementById('namePlayerInput');
 var socket;
 
 window.addEventListener('DOMContentLoaded', init);
-
 function validationName() {
     var regex = /^\w*$/;
     return regex.exec(nameInput.value) !== null;
 }
-function startGame() {
-    if(!socket) {
-        socket = io('http://localhost');
+function startGame(type) {
+    if (!socket) {
+        socket = io({
+            query: 'type=' + type
+        });
         // setupSocket(socket);
     }
-    console.log('test');
-    socket.on('respawn');
 }
 function init() {
     startGame();
@@ -29,7 +28,7 @@ window.onload = function() {
     
                 if (validationName()) {
                     nickErrorText.style.opacity = 0;
-                   // startGame('player');
+                    startGame('player');
                 } else {
                     nickErrorText.style.opacity = 1;
                 }
@@ -41,7 +40,7 @@ window.onload = function() {
         if (key == global.KEY_ENTER) {
             if (validationName()) {
                 nickErrorText.style.opacity = 0;
-               // startGame('player');
+                startGame('player');
             } else {
                 nickErrorText.style.opacity = 1;
             }
