@@ -2,12 +2,12 @@
 <html>
   <head>
     <title>AgarIO clone</title>
-    <link rel="stylesheet" type="text/css" href="index.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism-okaidia.min.css">
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/prism.min.js"></script>
-
+    <script src="js/main.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
-    <script>
+    <!-- <script>
       var uuid = null;
       var socket = io();
       io.on('assign uuid', (msg) => {
@@ -21,14 +21,34 @@
       socket.on('update map', (msg) => {
         console.log(`Map must be updated with params uuid=${msg.uuid}, x=${msg.x}, y=${msg.y}`);
       })
-    </script>
+    </script> -->
   </head>
   <body>
-    <h1>Hello, agario!</h1>
+
+      <div id="MenuWr">
+        
+          <div id="menuStart">
+              <h2>AgarIO with Bots</h2>
+              <input type="text" autofocus placeholder="Введите своё имя" id="namePlayerInput" maxlength="30"/>
+              <b class="input-error">Имя должно состоять только из букв и цифр!</b>
+              <button id="butStart">Играть</button>
+              <button id="butWatch">Наблюдать</button>
+          </div>
+        </div>
+
+        <div id="rule">
+            <h3>Как играть</h3>
+            <ul>
+                <li>С помощью клавиатуры, а именно клавиш(стрелки или a,w,s,d), передвигай шарик.</li>
+                <li>Ешь меньшего героя либо еду, разбросанную по полю.</li>
+                <li>Останься в живых.</li>
+            </ul>
+        </div>
+    <!-- <h1>Hello, agario!</h1>
     <button>UP</button>
     <button>DOWN</button>
     <button>LEFT</button>
-    <button>RIGHT</button>
+    <button>RIGHT</button> -->
 
   </body>
 </html>

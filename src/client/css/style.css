@@ -1,0 +1,62 @@
+#MenuWr {
+    -webkit-transition: max-height 1s;
+    -moz-transition: max-height 1s;
+    -ms-transition: max-height 1s;
+    -o-transition: max-height 1s;
+    transition: max-height 1s;
+    overflow: hidden;
+    z-index: 2;
+}
+#menuStart {
+    text-align: center;
+    position: relative;
+    margin: auto;
+    margin-top: 100px;
+    width: 450px;
+    padding: 20px;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+     background-color: #fff0c7;
+    box-sizing: border-box;
+    
+}
+input[type="text"] {
+    border: 1px solid #cccccc;
+    border-radius: 3px; 
+    -webkit-border-radius: 3px; 
+    -moz-border-radius: 3px; 
+    -khtml-border-radius: 3px; 
+    background: #ffffff !important;
+    height: 30px; 
+    width: 100%; 
+    font-size: 16px;
+ }
+ input[type="text"]:focus {
+    border: 1px solid #ffff33
+  }
+
+  #butStart, #butWatch{
+
+        position: relative;
+        margin: auto;
+        margin-top: 10px;
+        width: 50%;
+        height: 40px;
+        box-sizing: border-box;
+        font-size: large;
+        color: white;
+        text-align: center;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+        background: #ffb01f;
+        border: 0;
+        border-bottom: 2px solid #ff9900;
+        cursor: pointer;
+        -webkit-box-shadow: inset 0 -2px #ff9900;
+        box-shadow: inset 0 -2px #ff9900;
+        border-radius: 5px;
+        -moz-border-radius: 5px;
+        -webkit-border-radius: 5px;
+        margin-bottom: 10px;
+    
+  }
