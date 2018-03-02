@@ -6,7 +6,7 @@
     <link rel="stylesheet" type="text/css" href="/css/app.css">
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/prism.min.js"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
     <script>
       var uuid = null;
       var socket = io();
@@ -21,7 +21,7 @@
       socket.on('update map', (msg) => {
         console.log(`Map must be updated with params uuid=${msg.uuid}, x=${msg.x}, y=${msg.y}`);
       })
-    </script>
+    </script> -->
   </head>
   <body>
     <h1>Hello, agario!</h1>
@@ -33,5 +33,7 @@
     <div id="gameArea">
         <canvas tabindex="1" id="gameCanvas"></canvas>
     </div>
+
+    <script src="/js/app.js"></script>
   </body>
 </html>

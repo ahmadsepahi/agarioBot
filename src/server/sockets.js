@@ -30,6 +30,7 @@ exports.handleAction = function(io, socket, currentPlayer) {
     });
 
     socket.on('respawn', function () {
+        console.log('kek');
     });
 
     socket.on('disconnect', function () {
