@@ -6,12 +6,17 @@ var socket;
 window.addEventListener('DOMContentLoaded', init);
 
 function startGame() {
-    if(!socket) {
-        socket = io('http://localhost');
+    if (!socket) {
+        socket = io({query: 'type=alex'});
         // setupSocket(socket);
     }
-    console.log('test');
-    socket.on('respawn');
+
+    socket.on('pongcheck', function (data) {
+        console.log(data, 'test');
+        socket.emit('respawn', {
+            my: 'data'
+        });
+    });
 }
 
 function init() {

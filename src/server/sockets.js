@@ -1,19 +1,17 @@
 'use strict';
 
-const socketio = require('socket.io')
+const socketio = require('socket.io');
 
 // const util = require('./lib/util');
 
-exports.connect = function(http, callback) {
+exports.connect = function (http, callback) {
     const io = socketio(http);
-
-    io.on('connection', function(socket) {
+    io.on('connection', function (socket) {
         callback(io, socket);
     });
 }
 
-
-exports.handleAction = function(io, socket, currentPlayer) {
+exports.handleAction = function (io, socket, currentPlayer) {    
     socket.on('pingcheck', function () {
         socket.emit('pongcheck');
     });
@@ -31,9 +29,7 @@ exports.handleAction = function(io, socket, currentPlayer) {
         console.log('kek');
     });
 
-    socket.on('disconnect', function () {
-    });
+    socket.on('disconnect', function () {});
 
-    socket.on('pass', function(data) {
-    });
+    socket.on('pass', function (data) {});
 }
