@@ -10,13 +10,22 @@ function validationName() {
     return regex.exec(nameInput.value) !== null;
 }
 function startGame(type) {
+    global.playerName = nameInput.value.replace(/(<([^>]+)>)/ig, '').substring(0,30);
+    global.typePlayer = type;
+    global.scrWidth = window.innerWidth;
+    global.scrHeight = window.innerHeight;
+    document.getElementById('MenuWr').style.maxHeight = '0px';
+      
+    document.getElementById('gameArea').style.opacity = 1;
     if (!socket) {
         socket = io({
             query: 'type=' + type
         });
+        
         // setupSocket(socket);
     }
 }
+
 function init() {
     startGame();
 }
@@ -48,3 +57,7 @@ window.onload = function() {
     });
     var instructions = document.getElementById('rule');
 }
+
+window.Canvas = new Canvas();
+var c = window.canvas.cv;
+var graphic = c.getContext('2d');
