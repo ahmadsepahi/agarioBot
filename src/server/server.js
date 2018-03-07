@@ -1,5 +1,3 @@
-'use strict';
-
 var express = require('express');
 var app = express();
 var http = require('http').Server(app);
@@ -9,50 +7,19 @@ var SocketsHandler = require('./sockets');
 // Import game settings.
 var config = require('../../config.json');
 
+
+var controllers = require('./controllers/controllers');
+var PlayerController = require('./controllers/player_controller');
+
 // Import utilities.
 var util = require('./lib/util');
 
 app.use(express.static(__dirname + '/../client'));
 
 SocketsHandler.connect(http, function (io, socket) {
-    console.log('New user connected!', socket.handshake.query.type);
+    console.log('[INFO]: new user connected!', socket.id);
 
-    //   let type = socket.handshake.query.type;
-    //   let radius = util.massToRadius(c.defaultPlayerMass);
-    //   let position = c.newPlayerInitialPosition == 'farthest' ? util.uniformPosition(users, radius) : util.randomPosition(radius);
-
-    //   var cells = [];
-    //   var massTotal = 0;
-
-    //   if (type === 'player') {
-    //       cells = [{
-    //           mass: c.defaultPlayerMass,
-    //           x: position.x,
-    //           y: position.y,
-    //           radius: radius
-    //       }];
-    //       massTotal = c.defaultPlayerMass;
-    //   }
-
-    //   let currentPlayer = {
-    //       id: socket.id,
-    //       x: position.x,
-    //       y: position.y,
-    //       w: c.defaultPlayerMass,
-    //       h: c.defaultPlayerMass,
-    //       cells: cells,
-    //       massTotal: massTotal,
-    //       hue: Math.round(Math.random() * 360),
-    //       type: type,
-    //       lastHeartbeat: new Date().getTime(),
-    //       target: {
-    //           x: 0,
-    //           y: 0
-    //       }
-    //   };
-
-    let currentPlayer = {};
-
+    let currentPlayer = new controllers.PlayerController(socket)
     SocketsHandler.handleAction(io, socket, currentPlayer);
 });
 
@@ -62,10 +29,3 @@ var serverport = process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || config
 http.listen(serverport, ipaddress, function () {
     console.log('[DEBUG] Listening on ' + ipaddress + ':' + serverport);
 });
-
-// io.on('connection', function (socket) {
-//   socket.emit('news', { hello: 'world' });
-//   socket.on('my other event', function (data) {
-//     console.log(data);
-//   });
-// });

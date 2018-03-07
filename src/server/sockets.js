@@ -11,25 +11,37 @@ exports.connect = function (http, callback) {
     });
 }
 
-exports.handleAction = function (io, socket, currentPlayer) {    
-    socket.on('pingcheck', function () {
-        socket.emit('pongcheck');
+exports.handleAction = function (io, socket, currentPlayer) {
+    socket.on('heartbreak', function(target) {
+        console.log(currentPlayer);
+        // update last action time to kick if long absent
+        currentPlayer.updateLastHeartbeat();
+
+        // update target coordinates if user change movement direction between kicks
+        if (target.x !== currentPlayer.targetX || target.y !== currentPlayer.targetY) {
+            currentPlayer.targetX = target.x;
+            currentPlayer.targetY = target.y;
+        }
     });
 
-    socket.on('gotit', function (player) {
-        console.log('[INFO] Player ' + player.name + ' connecting!');
-    });
+    // socket.on('pingcheck', function () {
+    //     socket.emit('pongcheck');
+    // });
 
-    socket.on('windowResized', function (data) {
-        currentPlayer.screenWidth = data.screenWidth;
-        currentPlayer.screenHeight = data.screenHeight;
-    });
+    // socket.on('gotit', function (player) {
+    //     console.log('[INFO] Player ' + player.name + ' connecting!');
+    // });
 
-    socket.on('respawn', function () {
-        console.log('kek');
-    });
+    // socket.on('windowResized', function (data) {
+    //     currentPlayer.screenWidth = data.screenWidth;
+    //     currentPlayer.screenHeight = data.screenHeight;
+    // });
 
-    socket.on('disconnect', function () {});
+    // socket.on('respawn', function () {
+    //     console.log('kek');
+    // });
 
-    socket.on('pass', function (data) {});
+    // socket.on('disconnect', function () {});
+
+    // socket.on('pass', function (data) {});
 }
