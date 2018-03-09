@@ -22,12 +22,20 @@ exports.handleAction = function (io, socket, currentPlayer) {
         }
     });
 
-    socket.on('moveUp', function(moveParams) {
-      //
+    socket.on('moveUp', function(direction) {
+      console.log('[INFO]: direction chagned - ', direction, socket.id);
     })
 
-    socket.on('moveDown', function(moveParams) {
-      //
+    socket.on('moveDown', function(direction) {
+      console.log('[INFO]: direction changed - ', direction, socket.id);
+    });
+
+    socket.on('moveRight', function(direction) {
+      console.log('[INFO]: direction changed - ', direction, socket.id);
+    });
+
+    socket.on('moveLeft', function(direction) {
+      console.log('[INFO]: direction changed - ', direction, socket.id);
     });
 
     socket.on('kick', function() {
