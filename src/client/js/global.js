@@ -19,5 +19,6 @@ module.exports = {
     scrWidth: window.innerWidth,
     scrHeight: window.innerHeight,
     backgroundColor: '#ffd6c0',
-    disconnect : false
+    disconnect : false,
+    gameStart:true
 };

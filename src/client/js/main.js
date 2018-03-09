@@ -11,17 +11,16 @@ function validationName() {
     return regex.exec(nameInput.value) !== null;
 }
 function startGame(type) {
-    console.log("Ok1");
     global.playerName = nameInput.value.replace(/(<([^>]+)>)/ig, '').substring(0,30);
     global.typePlayer = type;
     global.scrWidth = window.innerWidth;
     global.scrHeight = window.innerHeight;
     document.getElementById('MenuWr').style.maxHeight = '0px';
-    console.log("Ok4");
+
     document.getElementById('gameArea').style.opacity = 1;
-    console.log("Ok3");
+
     if (!socket) {
-        console.log("Ok2");
+    
         socket = io({
             query: 'type=' + type
         });
@@ -38,15 +37,15 @@ function startGame(type) {
 //     startGame();
 // }
 window.onload = function() {
-    console.log("Ok7");
+
     var btnStart = document.getElementById('butStart'),
         btnWatch = document.getElementById('butWatch'),
         nickErrorText = document.querySelector('#menuStart .input-error');
     btnStart.onclick = function () {
-        console.log("Ok5");
+   
                 if (validationName()) {
                     nickErrorText.style.opacity = 0;
-                    console.log("Ok6");
+              
                     startGame('player');
                 } else {
                     nickErrorText.style.opacity = 1;
@@ -68,9 +67,9 @@ window.onload = function() {
     var instructions = document.getElementById('rule');
 }
 
-window.Canvas = new Canvas();
+window.canvas = new Canvas();
 var c = window.canvas.cv;
-var graphic = c.getContext('2d');
+var graph = c.getContext('2d');
 
 
 window.requestAnimFrame = (function() {
@@ -90,9 +89,8 @@ function playLoop() {
     if (!global.disconnect) {
         if (global.gameStart) {
             graph.fillStyle = global.backgroundColor;
-            graph.fillRect(0, 0, global.screenWidth, global.screenHeight);
+            graph.fillRect(0, 0, global.scrWidth, global.scrHeight);
 
-            //drawgrid();
            
 
         } 
