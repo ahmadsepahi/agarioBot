@@ -21,6 +21,8 @@
     box-sizing: border-box;
     
 }
+
+
 input[type="text"] {
     border: 1px solid #cccccc;
     border-radius: 3px; 

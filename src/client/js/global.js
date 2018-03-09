@@ -18,4 +18,6 @@ module.exports = {
     virusSides: 20,
     scrWidth: window.innerWidth,
     scrHeight: window.innerHeight,
+    backgroundColor: '#ffd6c0',
+    disconnect : false
 };

@@ -19,8 +19,8 @@ app.use(express.static(__dirname + '/../client'));
 SocketsHandler.connect(http, function (io, socket) {
     console.log('[INFO]: new user connected!', socket.id);
 
-    let currentPlayer = new controllers.PlayerController(socket)
-    SocketsHandler.handleAction(io, socket, currentPlayer);
+   // let currentPlayer = new controllers.PlayerController(socket)
+   // SocketsHandler.handleAction(io, socket, currentPlayer);
 });
 
 // Don't touch, IP configurations.
