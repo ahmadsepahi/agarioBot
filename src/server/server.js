@@ -14,14 +14,46 @@ var PlayerController = require('./controllers/player_controller');
 // Import utilities.
 var util = require('./lib/util');
 
+var users = {};
+var sockets = {};
+
 app.use(express.static(__dirname + '/../client'));
 
 SocketsHandler.connect(http, function (io, socket) {
-    console.log('[INFO]: new user connected!', socket.id);
+  console.log('[INFO]: new user connected!', socket.id);
 
-    let currentPlayer = new controllers.PlayerController(socket)
-    SocketsHandler.handleAction(io, socket, currentPlayer);
+  let currentPlayer = new PlayerController.PlayerController(socket);
+  users[currentPlayer.id] = currentPlayer;
+  sockets[socket.id] = socket;
+
+  SocketsHandler.handleAction(io, socket, currentPlayer);
 });
+
+// function tick(currentPlayer) {
+//   let now = new DateTime.getTime();
+//   let maxHearbreakInterval = 1000; 
+  
+//   if (now - maxHearbreakInterval > currentPlayer.getLastHeartbreak()) {
+//     let socket = socket[currentPlayer.id];
+
+//     socket.emit('kick');
+//     socket.disconnect();
+
+//     delete users[currentPlayer.id];
+//     delete sockets[currentPlayer.id];
+//   };
+// }
+
+// function gameloop() {
+//   console.log(users);
+//   // users.forEach(user => {
+//   //   tick(user);
+//   // });
+// }
+
+// setInterval(moveloop, 1000 / 60);
+// setInterval(gameloop, 1000);
+// setInterval(sendUpdates, 1000);
 
 // Don't touch, IP configurations.
 var ipaddress = process.env.OPENSHIFT_NODEJS_IP || process.env.IP || config.host;
