@@ -1,6 +1,9 @@
+import { request } from 'http';
+
 var io = require('socket.io-client');
 var Canvas = require('./canvas');
 var global = require('./global');
+var player = require('./player');
 var nameInput = document.getElementById('namePlayerInput');
 var socket;
 
@@ -11,15 +14,14 @@ function validationName() {
     return regex.exec(nameInput.value) !== null;
 }
 function startGame(type) {
-    console.log("Ok1");
     global.playerName = nameInput.value.replace(/(<([^>]+)>)/ig, '').substring(0,30);
     global.typePlayer = type;
     global.scrWidth = window.innerWidth;
     global.scrHeight = window.innerHeight;
     document.getElementById('MenuWr').style.maxHeight = '0px';
-    console.log("Ok4");
+
     document.getElementById('gameArea').style.opacity = 1;
-    console.log("Ok3");
+
     if (!socket) {
         console.log("Ok2");
         socket = io();
@@ -36,15 +38,15 @@ function startGame(type) {
 //     startGame();
 // }
 window.onload = function() {
-    console.log("Ok7");
+
     var btnStart = document.getElementById('butStart'),
         btnWatch = document.getElementById('butWatch'),
         nickErrorText = document.querySelector('#menuStart .input-error');
     btnStart.onclick = function () {
-        console.log("Ok5");
+   
                 if (validationName()) {
                     nickErrorText.style.opacity = 0;
-                    console.log("Ok6");
+              
                     startGame('player');
                 } else {
                     nickErrorText.style.opacity = 1;
@@ -90,7 +92,6 @@ function playLoop() {
             graph.fillStyle = global.backgroundColor;
             graph.fillRect(0, 0, global.scrWidth, global.scrHeight);
 
-            //drawgrid();
            
 
         } 
