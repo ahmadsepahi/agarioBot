@@ -103,7 +103,7 @@ var myGridObject = {
     canvasHeight : global.scrHeight, //высота холста
     cellsNumberX : 15, //количество ячеек по горизонтали
     cellsNumberY : 15, //количество ячеек по вертикали
-    color : "#000", //цвет линий
+    color : "#fff", //цвет линий
         //Метод setSettings устанавливает все настройки
     setSettings : function() {
                 // получаем наш холст по id
