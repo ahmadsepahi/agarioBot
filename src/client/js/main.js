@@ -71,6 +71,7 @@ window.onload = function() {
 }
 
 window.canvas = new Canvas();
+global.player = player;
 var c = window.canvas.cv;
 var graph = c.getContext('2d');
 
@@ -98,6 +99,28 @@ function playLoop() {
 
         } 
         }
+}
+function drawCircle(centerX, centerY, radius, sides) {
+    var theta = 0;
+    var x = 0;
+    var y = 0;
+
+    graph.beginPath();
+
+    for (var i = 0; i < sides; i++) {
+        theta = (i / sides) * 2 * Math.PI;
+        x = centerX + radius * Math.sin(theta);
+        y = centerY + radius * Math.cos(theta);
+        graph.lineTo(x, y);
+    }
+
+    graph.closePath();
+    graph.stroke();
+    graph.fill();
+}
+
+function drawPlayers(player) {
+
 }
 var myGridObject = {
     canvasWidth : global.scrWidth, //ширина холста
