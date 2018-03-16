@@ -99,6 +99,12 @@ function tickPlayer(currentPlayer) {
     game.movePlayer(currentPlayer);
 }
 
+function moveloop() {
+    users.forEach(user => {
+        tickPlayer(user);
+    });
+}
+
 
 setInterval(moveloop, 1000 / 60);
 setInterval(gameloop, 1000);
