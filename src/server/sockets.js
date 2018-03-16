@@ -14,34 +14,33 @@ exports.connect = function (http, callback) {
 exports.handleAction = function (io, socket, currentPlayer) {
     socket.on('heartbreak', function(target) {
         console.log(currentPlayer);
-        // update last action time to kick if long absent
         currentPlayer.updateLastHeartbeat();
 
-        // update target coordinates if user change movement direction between kicks
         if (target.x !== currentPlayer.targetX || target.y !== currentPlayer.targetY) {
             currentPlayer.targetX = target.x;
             currentPlayer.targetY = target.y;
         }
     });
 
-    // socket.on('pingcheck', function () {
-    //     socket.emit('pongcheck');
-    // });
+    socket.on('moveUp', function(direction) {
+      console.log('[INFO]: direction chagned - ', direction, socket.id);
+    })
 
-    // socket.on('gotit', function (player) {
-    //     console.log('[INFO] Player ' + player.name + ' connecting!');
-    // });
+    socket.on('moveDown', function(direction) {
+      console.log('[INFO]: direction changed - ', direction, socket.id);
+    });
 
-    // socket.on('windowResized', function (data) {
-    //     currentPlayer.screenWidth = data.screenWidth;
-    //     currentPlayer.screenHeight = data.screenHeight;
-    // });
+    socket.on('moveRight', function(direction) {
+      console.log('[INFO]: direction changed - ', direction, socket.id);
+    });
 
-    // socket.on('respawn', function () {
-    //     console.log('kek');
-    // });
+    socket.on('moveLeft', function(direction) {
+      console.log('[INFO]: direction changed - ', direction, socket.id);
+    });
 
-    // socket.on('disconnect', function () {});
+    socket.on('kick', function() {
+      //
+    });
 
-    // socket.on('pass', function (data) {});
+    socket.on('disconnect', function () {});
 }
