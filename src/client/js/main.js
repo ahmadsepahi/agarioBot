@@ -130,7 +130,7 @@ var myGridObject = {
         //Метод setSettings устанавливает все настройки
     setSettings : function() {
                 // получаем наш холст по id
-        canvas = document.getElementById("mycanvas");
+        canvas = document.getElementById("cvs");
                 // устанавливаем ширину холста
         canvas.width = this.canvasWidth;
                 // устанавливаем высоту холста

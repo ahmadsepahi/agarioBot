@@ -3,16 +3,51 @@ var global = require('./global');
 
 class Canvas {
   constructor() {
+ constructor(params) {
+        this.directionLock = false;
+        this.target = global.target;
+        this.reenviar = true;
+        this.socket = global.socket;
+        this.directions = [];
+        var self = this;
 
-    this.cv = document.getElementById('mycanvas');
-    this.cv.width = global.scrWidth;
-    this.cv.height = global.scrHeight;
+        this.cv = document.getElementById('cvs');
+        this.cv.width = global.screenWidth;
+        this.cv.height = global.screenHeight;
+      
+        this.cv.addEventListener('keypress', this.keyInput, false);
+        this.cv.addEventListener('keyup', function(event) {
+            self.reenviar = true;
+            self.directionUp(event);
+        }, false);
+        this.cv.addEventListener('keydown', this.directionDown, false);
+        this.cv.parent = self;
+        global.canvas = this;
+    }
+  // Срабатывает при изменении направления
+    directionDown(event) {
+    	var key = event.which || event.keyCode;
+        var self = this.parent; //для того, чтобы мы не использовали объект cv
+    	if (self.directional(key)) {
+    		self.directionLock = true;
+    		if (self.newDirection(key, self.directions, true)) {
+    			self.updateTarget(self.directions);
+    			self.socket.emit('heartbeat', self.target);
+    		}
+    	}
+    }
 
-    window.addEventListener('keypress', this.movement, false);
-
-    global.canvas = this;
-  }
-
+    // Срабатывает при изменении направления
+    directionUp(event) {
+    	var key = event.which || event.keyCode;
+    	if (this.directional(key)) { 
+    		if (this.newDirection(key, this.directions, false)) {
+    			this.updateTarget(this.directions);
+    			if (this.directions.length === 0) this.directionLock = false;
+    			this.socket.emit('heartbeat', this.target);
+    		}
+    	}
+    }
   movement(event) {
     let keyCode = event.keyCode;
 
