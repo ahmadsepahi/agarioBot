@@ -27,11 +27,31 @@ class GameController {
   }
 
   removeFood(food, toRemove) {
-    while (toRem--) {
+    while (toRemove--) {
       food.pop();
     }
 
     return food;
+  }
+
+  balanceMass(users, food) {
+    let usersMass = users.map(user => { return user.massTotal; }).reduce((prev,current) => { return prev + current; }, 0);
+    let totalMass = food.length * config.foodMass + usersMass;
+        
+
+    let massDelta = config.gameMass - totalMass;
+    let maxFoodDelta = config.maxFood - food.length;
+    let foodDelta = parseInt(massDelta / config.foodMass) - maxFoodDelta;
+    
+    let foodToAdd = Math.min(foodDelta, maxFoodDelta);
+    let foodToRemove = -Math.max(foodDelta, maxFoodDelta);
+
+    if (foodToAdd > 0) {
+      this.addFood(food, foodToAdd);
+    }
+    else if (foodToRemove > 0) {
+      this.removeFood(food, foodToRemove);
+    }
   }
 }
 
