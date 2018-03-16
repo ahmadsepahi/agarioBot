@@ -16,6 +16,9 @@ var util = require('./lib/util');
 
 
 const UserController = require('./user_controller');
+const GameController = require('./game_controller');
+
+var game = new GameController();
 
 var users = [];
 var massFood = [];
@@ -85,6 +88,22 @@ io.on('connection', function(socket) {
         }
     });
 });
+
+
+function tickPlayer(currentPlayer) {
+    if (currentPlayer.lastHeartbeat < new Date().getTime() - c.maxHeartbeatInterval) {
+        sockets[currentPlayer.id].emit('kick', 'Last heartbeat received over ' + c.maxHeartbeatInterval + ' ago.');
+        sockets[currentPlayer.id].disconnect();
+    }
+
+    game.movePlayer(currentPlayer);
+}
+
+function moveloop() {
+    users.forEach(user => {
+        tickPlayer(user);
+    });
+}
 
 
 setInterval(moveloop, 1000 / 60);
