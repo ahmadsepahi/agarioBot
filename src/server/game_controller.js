@@ -1,17 +1,62 @@
 'use strict';
 
 const config = require('../../config.json');
-const utils = require('./lib/util');
+const util = require('./lib/util');
+
+const initMassLog = util.log(config.defaultPlayerMass, config.slowBase);
 
 class GameController {
-  constructor() {
+  constructor() {}
+
+  movePlayer(player) {
+    let x = 0; 
+    let y = 0;
+
+    player.cells.forEach((cell, i) => {
+      let target = {
+        x: player.x - cell.x + player.target.x,
+        y: player.y - cell.y + player.target.y
+      };
+
+      // just vector distance
+      let distance = Math.sqrt(Math.pow(target.y, 2) + Math.pow(target.x, 2));
+      // just angel between vectors
+      let deg = Math.atan2(target.y, target.x);
+
+      // must slow down small players for balance sake
+      let slowdown;
+      cell.speed <= 6.25 ? slowdown = util.log(cell.mass, config.slowBase) - initMassLog + 1 : slowdown = 1;
+
+      let deltaY = cell.speed * Math.sin(deg) / slowdown;
+      let deltaX = cell.speed * Math.cos(deg) / slowdown;
+
+      if (cell.speed > 6.25) {
+        cell.speed -= 0.5;
+      }
+      if (distance < (50 + cell.radius)) {
+        deltaY *= distance / (50 + cell.radius);
+        deltaX *= distance / (50 + cell.radius);
+      }
+      if (!isNaN(deltaY)) {
+        cell.y += deltaY;
+      }
+      if (!isNaN(deltaX)) {
+        cell.x += deltaX;
+      }
+
+      // TODO calculate position change
+      // TODO calculate borders change
+    });
+
+    player.x = x / player.cells.length;
+    player.y = y / player.cells.length;
   }
 
   addFood(food, toAdd) {
-    let radius = utils.massToRadius(config.foodMass);
+    let radius = util.massToRadius(config.foodMass);
 
     while (toAdd--) {
-      let position = config.foodUniformDisposition ? utils.uniformPosition(food, radius) : util.randomPosition(radius);
+      let position = config.foodUniformDisposition ? util.uniformPosition(food, radius) : util.randomPosition(radius);
       
       food.push({
         id: ((new Date()).getTime() + '' + food.length) >>> 0,
