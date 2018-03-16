@@ -48,22 +48,38 @@ class Canvas {
     		}
     	}
     }
-  movement(event) {
-    let keyCode = event.keyCode;
+	//изменения координат в соответствии с направлением
+    updateTarget(list) {
+    	this.target = { x : 0, y: 0 };
+    	var directionHorizontal = 0;
+    	var directionVertical = 0;
+    	for (var i = 0, len = list.length; i < len; i++) {
+    		if (directionHorizontal === 0) {
+    			if (list[i] == global.KEY_LEFT || list[i] == global.KEY_LEFT1 ) directionHorizontal -= Number.MAX_VALUE;
+    			else if (list[i] == global.KEY_RIGHT || list[i] == global.KEY_RIGHT1) directionHorizontal += Number.MAX_VALUE;
+    		}
+    		if (directionVertical === 0) {
+    			if (list[i] == global.KEY_UP || list[i] == global.KEY_UP1) directionVertical -= Number.MAX_VALUE;
+    			else if (list[i] == global.KEY_DOWN || list[i] == global.KEY_DOWN1) directionVertical += Number.MAX_VALUE;
+    		}
+    	}
+    	this.target.x += directionHorizontal;
+    	this.target.y += directionVertical;
+        global.target = this.target;
+    }
+	 directional(key) {
+    	return this.horizontal(key) || this.vertical(key);
+    }
 
-    if (keyCode === global.KEY_UP) {
-      window.canvas.socket.emit('moveUp', 'up');
+    horizontal(key) {
+    	return key == global.KEY_LEFT || key == global.KEY_RIGHT || global.KEY_LEFT1 || key == global.KEY_RIGHT1 ;
     }
-    else if (keyCode === global.KEY_DOWN) {
-      window.canvas.socket.emit('moveDown', 'down');
+
+    vertical(key) {
+    	return key == global.KEY_DOWN || key == global.KEY_UP || global.KEY_DOWN1 || key == global.KEY_UP1;
     }
-    else if (keyCode === global.KEY_RIGHT) {
-      window.canvas.socket.emit('moveRight', 'right');
-    }
-    else if (keyCode === global.KEY_LEFT) {
-      window.canvas.socket.emit('moveLeft', 'left');
-    }
-  }
+	
+
 
 }
 

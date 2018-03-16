@@ -98,7 +98,7 @@ function playLoop() {
         } 
         }
 }
-<<<<<<< HEAD
+
 function drawCircle(centerX, centerY, radius, sides) {
     var theta = 0;
     var x = 0;
