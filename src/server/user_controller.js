@@ -1,23 +1,25 @@
 'use strict';
 
+let users = [];
+
+
 class UserController {
-  constructor(socketID, position, radius, massTotal, cells, type, config) {
-    this.id = socketID;
-    this.x =  position.x;
-    this.y = position.y;
+  getUsers() {
+    return users;
+  }
 
-    this.w = config.defaultPlayerMass;
-    this.h =  config.defaultPlayerMass;
+  addUser(user) {
+    users.push(user);
+  }
 
-    this.cells = cells;
-    this.massTotal = massTotal;
+  getUsersLength() {
+    return users.length;
+  }
 
-    this.hue = Math.round(Math.random() * 360);
-    this.type = type;
-
-    this.lastHeartbeat = new Date().getTime();
-    this.target = { x: 0, y: 0 }
+  removeUser(index) {
+    users.splice(index, 1);
   }
 }
+
 
 module.exports = UserController;
