@@ -1,76 +1,32 @@
 <!doctype html>
-<html>
-  <head>
-    <title>AgarIO clone</title>
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism-okaidia.min.css">
-    <link rel="stylesheet" type="text/css" href="/css/app.css">
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/prism.min.js"></script>
-
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
-    <script>
-      var uuid = null;
-      var socket = io();
-      io.on('assign uuid', (msg) => {
-        uuid = msg.uuid;
-      });
-
-      let x = 0;
-      let y = 0;
-
-      socket.emit('move', {x: x, y: y, uuid: uuid});
-      socket.on('update map', (msg) => {
-        console.log(`Map must be updated with params uuid=${msg.uuid}, x=${msg.x}, y=${msg.y}`);
-      })
-    </script> -->
-  </head>
-  <style>
-  canvas {
-      display: block;
-      margin: 20px auto 0;
-      border: 1px dotted #000;
-    }
-    </style>
-  <body>
-    <div id="gameArea">
-      <canvas tabindex="1" id="cvs"></canvas>  
+<html lang="en">
+<head>
+    <!-- Meta Properties -->
+    <meta charset="UTF-8">
+    <title>KI14-06B</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/main.css" />
+    <script src="//code.jquery.com/jquery-2.2.0.min.js"></script>
+</head>
+<body>
+    <div id="gameAreaWrapper">
+        <canvas tabindex="1" id="cvs"></canvas>
     </div>
-      <div id="MenuWr">
-        
-          <div id="menuStart">
-              <h2>AgarIO with Bots </h2>
-              <input type="text" autofocus placeholder="Введите своё имя" id="namePlayerInput" maxlength="30"/>
-              <b class="input-error">Имя должно состоять только из букв и цифр!</b>
-              <button id="butStart">Играть</button>
-              <button id="butWatch">Наблюдать</button><br>
-              <a href="#openModal"><i class="fa fa-question-circle" style="font-size:36px"></i></a>
-              
-          </div>
+    <div id="startMenuWrapper">
+        <div id="startMenu">
+            <p>Agar.io by KI14-06B</p>
+            
+            <input type="text" tabindex="0" autofocus placeholder="Введите имя игрока" id="playerNameInput" maxlength="25" />
+            <b class="input-error">Недопустимые символы в имени игрока</b>
+            <br />
+            <a onclick="document.getElementById('spawn_cell').play();"><button id="startButton">Играть</button></a>
+            <button id="spectateButton">Наблюдать</button>
+            <br />
         </div>
-        <div id="openModal" class="modalDialog">
-              <div>
-                  <a href="#close" title="Закрыть" class="close">X</a>
-          
-            <h3>Как играть</h3>
-            <ul>
-                <li>С помощью клавиатуры, а именно с помощью клавиш(стрелок или a,w,s,d), передвигай шарик.</li>
-                <li>Ешь меньшего по размеру героя либо еду, разбросанную по полю.</li>
-                <li>Останься в живых.</li>
-            </ul>
-        </div>
-      </div>
-      
-    <!-- <h1>Hello, agario!</h1>
-    <button>UP</button>
-    <button>DOWN</button>
-    <button>LEFT</button>
-    <button>RIGHT</button> -->
-
-    <div id="gameArea">
-        <canvas tabindex="1" id="gameCanvas"></canvas>
     </div>
-
-    <script src="/js/app.js"></script>
-  </body>
+    <!-- JS -->
+    
+    <script src="js/app.js"></script>
+</body>
 </html>
