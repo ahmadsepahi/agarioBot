@@ -105,6 +105,75 @@ function moveloop() {
     });
 }
 
+function sendUpdates() {
+	let users = usersController.getUsers();
+    users.forEach(function (u) {
+        // center the view if x/y is undefined, this will happen for spectators
+        u.x = u.x || c.gameWidth / 2;
+        u.y = u.y || c.gameHeight / 2;
+
+        var visibleFood = food
+            .map(function (f) {
+                if (f.x > u.x - u.screenWidth / 2 - 20 &&
+                    f.x < u.x + u.screenWidth / 2 + 20 &&
+                    f.y > u.y - u.screenHeight / 2 - 20 &&
+                    f.y < u.y + u.screenHeight / 2 + 20) {
+                    return f;
+                }
+            })
+            .filter(function (f) {
+                return f;
+            });
+
+        var visibleMass = massFood
+            .map(function (f) {
+                if (f.x + f.radius > u.x - u.screenWidth / 2 - 20 &&
+                    f.x - f.radius < u.x + u.screenWidth / 2 + 20 &&
+                    f.y + f.radius > u.y - u.screenHeight / 2 - 20 &&
+                    f.y - f.radius < u.y + u.screenHeight / 2 + 20) {
+                    return f;
+                }
+            })
+            .filter(function (f) {
+                return f;
+            });
+
+        var visibleCells = users
+            .map(function (user) {
+                let cell = user.cells[0]
+                    if (cell.x + cell.radius > u.x - u.screenWidth / 2 - 20 &&
+                        cell.x - cell.radius < u.x + u.screenWidth / 2 + 20 &&
+                        cell.y + cell.radius > u.y - u.screenHeight / 2 - 20 &&
+                        cell.y - cell.radius < u.y + u.screenHeight / 2 + 20) {
+                        if (user.id !== u.id) {
+                            return {
+                                id: user.id,
+                                x: user.x,
+                                y: user.y,
+                                cells: user.cells,
+                                massTotal: Math.round(user.massTotal),
+                                hue: user.hue,
+                                name: user.name
+                            };
+                        } else {
+                            return {
+                                x: user.x,
+                                y: user.y,
+                                cells: user.cells,
+                                massTotal: Math.round(user.massTotal),
+                                hue: user.hue,
+                            };
+                        }
+                    }
+            })
+            .filter(function (user) {
+                return user;
+            });
+
+        global.sockets[u.id].emit('serverTellPlayerMove', visibleCells, visibleFood, visibleMass);
+    });
+}
+
 
 setInterval(moveloop, 1000 / 60);
 setInterval(gameloop, 1000);
