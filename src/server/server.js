@@ -150,6 +150,6 @@ setInterval(sendUpdates, 1000 / c.networkUpdateFactor);
 
 var ipaddress =  c.host;
 var serverport =  c.port;
-http.listen( serverport, ipaddress, function() {
+exports.server = http.listen( serverport, ipaddress, function() {
     console.log('[DEBUG] Listening on ' + ipaddress + ':' + serverport);
 });
