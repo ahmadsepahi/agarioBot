@@ -1,63 +1,70 @@
-import { request } from 'http';
-
 var io = require('socket.io-client');
 var Canvas = require('./canvas');
 var global = require('./global');
-var player = require('./player');
-var nameInput = document.getElementById('namePlayerInput');
+
+var playerNameInput = document.getElementById('playerNameInput');
 var socket;
+var reason;
 
-//window.addEventListener('DOMContentLoaded', init);
-function validationName() {
-    var regex = /^\w*$/;
-    console.log(nameInput.value);
-    return regex.exec(nameInput.value) !== null;
-}
-function startGame(type) {
-    global.playerName = nameInput.value.replace(/(<([^>]+)>)/ig, '').substring(0,30);
-    global.typePlayer = type;
-    global.scrWidth = window.innerWidth;
-    global.scrHeight = window.innerHeight;
-    document.getElementById('MenuWr').style.maxHeight = '0px';
-
-    document.getElementById('gameArea').style.opacity = 1;
-
-    if (!socket) {
-        console.log("Ok2");
-        socket = io();
-        
-        setSocket(socket);
+var debug = function(args) {
+    if (console && console.log) {
+        console.log(args);
     }
-    // if (!global.animationPlayMain)
-    //     animationPlayMain();
+};
+
+function startGame(type) {
+    global.playerName = playerNameInput.value.replace(/(<([^>]+)>)/ig, '').substring(0,25);
+    global.playerType = type;
+
+    global.screenWidth = window.innerWidth;
+    global.screenHeight = window.innerHeight;
+
+    document.getElementById('startMenuWrapper').style.maxHeight = '0px';
+    document.getElementById('gameAreaWrapper').style.opacity = 1;
+    if (!socket) {
+        socket = io({query:"type=" + type});
+        setupSocket(socket);
+    }
+    if (!global.animLoopHandle)
+        animloop();
+    socket.emit('respawn');
     window.canvas.socket = socket;
     global.socket = socket;
 }
 
-// function init() {
-//     startGame();
-// }
+// Checks if the nick chosen contains valid alphanumeric characters (and underscores).
+function validNick() {
+    var regex = /^\w*$/;
+    debug('Regex Test', regex.exec(playerNameInput.value));
+    return regex.exec(playerNameInput.value) !== null;
+}
+
 window.onload = function() {
 
-    var btnStart = document.getElementById('butStart'),
-        btnWatch = document.getElementById('butWatch'),
-        nickErrorText = document.querySelector('#menuStart .input-error');
-    btnStart.onclick = function () {
-   
-                if (validationName()) {
-                    nickErrorText.style.opacity = 0;
-              
-                    startGame('player');
-                } else {
-                    nickErrorText.style.opacity = 1;
-                }
-            };
+    var btn = document.getElementById('startButton'),
+        btnS = document.getElementById('spectateButton'),
+        nickErrorText = document.querySelector('#startMenu .input-error');
 
-    nameInput.addEventListener('keypress', function(data)
-    {
-        var key = data.keyCode;
-        if (key == global.KEY_ENTER) {
-            if (validationName()) {
+    btnS.onclick = function () {
+        startGame('spectate');
+    };
+
+    btn.onclick = function () {
+
+        // Checks if the nick is valid.
+        if (validNick()) {
+            nickErrorText.style.opacity = 0;
+            startGame('player');
+        } else {
+            nickErrorText.style.opacity = 1;
+        }
+    };
+
+    playerNameInput.addEventListener('keypress', function (e) {
+        var key = e.which || e.keyCode;
+
+        if (key === global.KEY_ENTER) {
+            if (validNick()) {
                 nickErrorText.style.opacity = 0;
                 startGame('player');
             } else {
@@ -65,38 +72,144 @@ window.onload = function() {
             }
         }
     });
-    var instructions = document.getElementById('rule');
-}
+};
+
+// TODO: Break out into GameControls.
+
+var foodConfig = {
+    border: 0,
+};
+
+var playerConfig = {
+    border: 6,
+    textColor: '#FFFFFF',
+    textBorder: '#000000',
+    textBorderSize: 3,
+    defaultSize: 30
+};
+
+var player = {
+    id: -1,
+    x: global.screenWidth / 2,
+    y: global.screenHeight / 2,
+    screenWidth: global.screenWidth,
+    screenHeight: global.screenHeight,
+    target: {x: global.screenWidth / 2, y: global.screenHeight / 2}
+};
+global.player = player;
+
+var foods = [];
+// var fireFood = [];
+var users = [];
+var target = {x: player.x, y: player.y};
+global.target = target;
 
 window.canvas = new Canvas();
-global.player = player;
+
 var c = window.canvas.cv;
 var graph = c.getContext('2d');
 
 
-window.requestAnimFrame = (function() {
-    return  window.requestAnimationFrame       ||
-            window.webkitRequestAnimationFrame ||
-            window.mozRequestAnimationFrame    ||
-            window.msRequestAnimationFrame     ||
-            function( callback ) {
-                window.setTimeout(callback, 1000 / 60);
-            };
-})();
-function animationPlay() {
-    // global.animationPlayMain = window.requestAnimFrame(animationPlay);
-    playLoop();
-}
-function playLoop() {
-    if (!global.disconnect) {
-        if (global.gameStart) {
-            graph.fillStyle = global.backgroundColor;
-            graph.fillRect(0, 0, global.scrWidth, global.scrHeight);
+// socket stuff.
+function setupSocket(socket) {
+    // Handle ping.
+    socket.on('pongcheck', function () {
+        var latency = Date.now() - global.startPingTime;
+        debug('Latency: ' + latency + 'ms');
+    });
 
-           
+    // Handle error.
+    socket.on('connect_failed', function () {
+        socket.close();
+        global.disconnected = true;
+    });
 
-        } 
+    socket.on('disconnect', function () {
+        socket.close();
+        global.disconnected = true;
+    });
+
+    // Handle connection.
+    socket.on('welcome', function (playerSettings) {
+
+        player = playerSettings;
+        player.name = global.playerName;
+        player.screenWidth = global.screenWidth;
+        player.screenHeight = global.screenHeight;
+        player.target = window.canvas.target;
+        global.player = player;
+        socket.emit('gotit', player);
+        global.gameStart = true;
+        debug('Game started at: ' + global.gameStart);
+ 
+		c.focus();
+    });
+
+    socket.on('gameSetup', function(data) {
+        global.gameWidth = data.gameWidth;
+        global.gameHeight = data.gameHeight;
+        resize();
+    });
+
+    socket.on('playerDied', function (data) {
+        // TODO сообщение
+    });
+
+    socket.on('playerDisconnect', function (data) {
+        // TODO сообщение
+    });
+
+    socket.on('playerJoin', function (data) {
+        // TODO сообщение
+    });
+
+    // Handle movement.
+    socket.on('serverTellPlayerMove', function (userData, foodsList, massList) {
+        var playerData;
+        for(var i =0; i< userData.length; i++) {
+            if(typeof(userData[i].id) == "undefined") {
+                playerData = userData[i];
+                i = userData.length;
+            }
         }
+        if(global.playerType == 'player') {
+            var xoffset = player.x - playerData.x;
+            var yoffset = player.y - playerData.y;
+
+            player.x = playerData.x;
+            player.y = playerData.y;
+            player.hue = playerData.hue;
+            player.massTotal = playerData.massTotal;
+            player.cells = playerData.cells;
+            player.xoffset = isNaN(xoffset) ? 0 : xoffset;
+            player.yoffset = isNaN(yoffset) ? 0 : yoffset;
+        }
+        users = userData;
+        foods = foodsList;
+        // fireFood = massList;
+    });
+
+    // Death.
+    socket.on('RIP', function () {
+        global.gameStart = false;
+        global.died = true;
+        window.setTimeout(function() {
+            document.getElementById('gameAreaWrapper').style.opacity = 0;
+            document.getElementById('startMenuWrapper').style.maxHeight = '1000px';
+            global.died = false;
+            if (global.animLoopHandle) {
+                window.cancelAnimationFrame(global.animLoopHandle);
+                global.animLoopHandle = undefined;
+            }
+        }, 2500);
+    });
+
+    socket.on('kick', function (data) {
+        global.gameStart = false;
+        reason = data;
+        global.kicked = true;
+        socket.close();
+    });
 }
 
 function drawCircle(centerX, centerY, radius, sides) {
@@ -118,122 +231,11 @@ function drawCircle(centerX, centerY, radius, sides) {
     graph.fill();
 }
 
-function drawPlayers(player) {
-
-}
-var myGridObject = {
-    canvasWidth : global.scrWidth, //ширина холста
-    canvasHeight : global.scrHeight, //высота холста
-    cellsNumberX : 15, //количество ячеек по горизонтали
-    cellsNumberY : 15, //количество ячеек по вертикали
-    color : "#fff", //цвет линий
-        //Метод setSettings устанавливает все настройки
-    setSettings : function() {
-                // получаем наш холст по id
-        canvas = document.getElementById("cvs");
-                // устанавливаем ширину холста
-        canvas.width = this.canvasWidth;
-                // устанавливаем высоту холста
-        canvas.height = this.canvasHeight;
-                // canvas.getContext("2d") создает объект для рисования
-        ctx = canvas.getContext("2d");
-                // задаём цвет линий
-        ctx.strokeStyle = this.color;
-                // вычисляем ширину ячейки по горизонтали
-        lineX = canvas.width / this.cellsNumberX;
-                // вычисляем высоту ячейки по вертикали
-        lineY = canvas.height / this.cellsNumberY;
-    },
-        // данная функция как раз и будет отрисовывать сетку
-    drawGrid : function() {
-                // в переменной buf будет храниться начальная координата, откуда нужно рисовать линию
-                // с каждой итерацией она должна увеличиваться либо на ширину ячейки, либо на высоту
-        var buf = 0;
-        // Рисуем вертикальные линии
-        for (var i = 0; i <= this.cellsNumberX; i++) {
-                        // начинаем рисовать
-            ctx.beginPath();
-                        // ставим начальную точку
-            ctx.moveTo(buf, 0);
-                        // указываем конечную точку для линии
-            ctx.lineTo(buf, canvas.height);
-                        // рисуем и выводим линию
-            ctx.stroke();
-            buf +=lineX;
-        }       
-        buf = 0;
-        // Рисуем горизонтальные линии
-        for (var j = 0; j <= this.cellsNumberY; j++) {
-            ctx.beginPath();
-            ctx.moveTo(0, buf);
-            ctx.lineTo(canvas.width, buf);
-            ctx.stroke();
-            buf +=lineY;
-        }
-    }
-}
-myGridObject.setSettings();
-myGridObject.drawGrid();
-=======
-
-// var myGridObject = {
-//     canvasWidth : global.scrWidth, //ширина холста
-//     canvasHeight : global.scrHeight, //высота холста
-//     cellsNumberX : 15, //количество ячеек по горизонтали
-//     cellsNumberY : 15, //количество ячеек по вертикали
-//     color : "#fff", //цвет линий
-//         //Метод setSettings устанавливает все настройки
-//     setSettings : function() {
-//                 // получаем наш холст по id
-//         var canvas = document.getElementById("mycanvas");
-//                 // устанавливаем ширину холста
-//         canvas.width = this.canvasWidth;
-//                 // устанавливаем высоту холста
-//         canvas.height = this.canvasHeight;
-//                 // canvas.getContext("2d") создает объект для рисования
-//         var ctx = canvas.getContext("2d");
-//                 // задаём цвет линий
-//         ctx.strokeStyle = this.color;
-//                 // вычисляем ширину ячейки по горизонтали
-//         var lineX = canvas.width / this.cellsNumberX;
-//                 // вычисляем высоту ячейки по вертикали
-//         var lineY = canvas.height / this.cellsNumberY;
-//     },
-//         // данная функция как раз и будет отрисовывать сетку
-//     drawGrid : function() {
-//                 // в переменной buf будет храниться начальная координата, откуда нужно рисовать линию
-//                 // с каждой итерацией она должна увеличиваться либо на ширину ячейки, либо на высоту
-//         var buf = 0;
-//         // Рисуем вертикальные линии
-//         for (var i = 0; i <= this.cellsNumberX; i++) {
-//                         // начинаем рисовать
-//             ctx.beginPath();
-//                         // ставим начальную точку
-//             ctx.moveTo(buf, 0);
-//                         // указываем конечную точку для линии
-//             ctx.lineTo(buf, canvas.height);
-//                         // рисуем и выводим линию
-//             ctx.stroke();
-//             buf +=lineX;
-//         }       
-//         buf = 0;
-//         // Рисуем горизонтальные линии
-//         for (var j = 0; j <= this.cellsNumberY; j++) {
-//             ctx.beginPath();
-//             ctx.moveTo(0, buf);
-//             ctx.lineTo(canvas.width, buf);
-//             ctx.stroke();
-//             buf +=lineY;
-//         }
-//     }
-// }
-// myGridObject.setSettings();
-// myGridObject.drawGrid();
->>>>>>> a7e0387225a1135a4a5235de2b4f2df0331bc84c
-
-function setSocket(socket){
-    socket.on('gameSetup', function(data) {
-        global.gameWidth = data.gameWidth;
-        global.gameHeight = data.gameHeight;
-    });
+function drawFood(food) {
+    graph.strokeStyle = 'hsl(198.6, 100%, 45%)';
+    graph.fillStyle = 'hsl(198.6, 100%, 50%)';
+    graph.lineWidth = foodConfig.border;
+    drawCircle(food.x - player.x + global.screenWidth / 2,
+               food.y - player.y + global.screenHeight / 2,
+               food.radius, global.foodSides);
 }
