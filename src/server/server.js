@@ -44,6 +44,122 @@ function tickPlayer(currentPlayer) {
     }
 
     game.movePlayer(currentPlayer);
+
+    function funcFood(f) {
+        return SAT.pointInCircle(new V(f.x, f.y), playerCircle);
+    }
+
+    function deleteFood(f) {
+        food[f] = {};
+        food.splice(f, 1);
+    }
+
+    function eatMass(m) {
+        if (SAT.pointInCircle(new V(m.x, m.y), playerCircle)) {
+            if (m.id == currentPlayer.id && m.speed > 0 && z == m.num)
+                return false;
+            if (currentCell.mass > m.masa * 1.1)
+                return true;
+        }
+        return false;
+    }
+
+    function check(user) {
+        for (var i = 0; i < user.cells.length; i++) {
+            if (user.cells[i].mass > 10 && user.id !== currentPlayer.id) {
+                var response = new SAT.Response();
+                var collided = SAT.testCircleCircle(playerCircle,
+                    new C(new V(user.cells[i].x, user.cells[i].y), user.cells[i].radius),
+                    response);
+                if (collided) {
+                    response.aUser = currentCell;
+                    response.bUser = {
+                        id: user.id,
+                        name: user.name,
+                        x: user.cells[i].x,
+                        y: user.cells[i].y,
+                        num: i,
+                        mass: user.cells[i].mass
+                    };
+                    playerCollisions.push(response);
+                }
+            }
+        }
+        return true;
+    }
+
+    function collisionCheck(collision) {
+		let users = usersController.getUsers();
+
+        if (collision.aUser.mass > collision.bUser.mass * 1.1 && collision.aUser.radius > Math.sqrt(Math.pow(collision.aUser.x - collision.bUser.x, 2) + Math.pow(collision.aUser.y - collision.bUser.y, 2)) * 1.75) {
+            console.log('[DEBUG] Killing user: ' + collision.bUser.id);
+            console.log('[DEBUG] Collision info:');
+            var numUser = util.findIndex(users, collision.bUser.id);
+            if (numUser > -1) {
+                if (users[numUser].cells.length > 1) {
+                    users[numUser].massTotal -= collision.bUser.mass;
+                    users[numUser].cells.splice(collision.bUser.num, 1);
+                } else {
+                    usersController.removeUser(numUser)
+                    io.emit('playerDied', {
+                        name: collision.bUser.name
+                    });
+                    global.sockets[collision.bUser.id].emit('RIP');
+                }
+            }
+            currentPlayer.massTotal += collision.bUser.mass;
+            collision.aUser.mass += collision.bUser.mass;
+        }
+    }
+
+    for (var z = 0; z < currentPlayer.cells.length; z++) {
+        
+        var currentCell = currentPlayer.cells[z];
+        var playerCircle = new C(
+            new V(currentCell.x, currentCell.y),
+            currentCell.radius
+        );
+
+        var foodEaten = food.map(funcFood)
+            .reduce(function (a, b, c) {
+                return b ? a.concat(c) : a;
+            }, []);
+
+        foodEaten.forEach(deleteFood);
+
+        var massEaten = massFood.map(eatMass)
+            .reduce(function (a, b, c) {
+                return b ? a.concat(c) : a;
+            }, []);
+
+        var masaGanada = 0;
+        for (var m = 0; m < massEaten.length; m++) {
+            masaGanada += massFood[massEaten[m]].masa;
+            massFood[massEaten[m]] = {};
+            massFood.splice(massEaten[m], 1);
+            for (var n = 0; n < massEaten.length; n++) {
+                if (massEaten[m] < massEaten[n]) {
+                    massEaten[n]--;
+                }
+            }
+        }
+
+        if (typeof (currentCell.speed) == "undefined")
+            currentCell.speed = 6.25;
+        masaGanada += (foodEaten.length * c.foodMass);
+        currentCell.mass += masaGanada;
+        currentPlayer.massTotal += masaGanada;
+        currentCell.radius = util.massToRadius(currentCell.mass);
+        playerCircle.r = currentCell.radius;
+
+        let users = usersController.getUsers();
+        var playerCollisions = [];
+
+        users.forEach(user => {
+            check(user)
+        });
+        playerCollisions.forEach(collisionCheck);
+    }
 }
 
 function moveloop() {
