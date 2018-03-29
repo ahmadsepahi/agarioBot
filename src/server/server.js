@@ -18,9 +18,8 @@ const GameController = require('./game_controller');
 const {
     connect
 } = require("./sockets");
-const UsersController = require("./users_controller");
 
-let usersController = new UsersController();
+let userController = new UserController();
 var game = new GameController();
 
 connect(io);
@@ -89,7 +88,7 @@ function tickPlayer(currentPlayer) {
     }
 
     function collisionCheck(collision) {
-		let users = usersController.getUsers();
+		let users = userController.getUsers();
 
         if (collision.aUser.mass > collision.bUser.mass * 1.1 && collision.aUser.radius > Math.sqrt(Math.pow(collision.aUser.x - collision.bUser.x, 2) + Math.pow(collision.aUser.y - collision.bUser.y, 2)) * 1.75) {
             console.log('[DEBUG] Killing user: ' + collision.bUser.id);
@@ -100,7 +99,7 @@ function tickPlayer(currentPlayer) {
                     users[numUser].massTotal -= collision.bUser.mass;
                     users[numUser].cells.splice(collision.bUser.num, 1);
                 } else {
-                    usersController.removeUser(numUser)
+                    userController.removeUser(numUser)
                     io.emit('playerDied', {
                         name: collision.bUser.name
                     });
@@ -152,7 +151,7 @@ function tickPlayer(currentPlayer) {
         currentCell.radius = util.massToRadius(currentCell.mass);
         playerCircle.r = currentCell.radius;
 
-        let users = usersController.getUsers();
+        let users = userController.getUsers();
         var playerCollisions = [];
 
         users.forEach(user => {
@@ -163,13 +162,14 @@ function tickPlayer(currentPlayer) {
 }
 
 function moveloop() {
+    let users = userController.getUsers();
     users.forEach(user => {
         tickPlayer(user);
     });
 }
 
 function gameloop() {
-	let users = usersController.getUsers();
+	let users = userController.getUsers();
     if (users.length > 0) {
         users.sort(function (a, b) {
             return b.massTotal - a.massTotal;
@@ -190,7 +190,7 @@ function gameloop() {
 }
 
 function sendUpdates() {
-	let users = usersController.getUsers();
+	let users = userController.getUsers();
     users.forEach(function (u) {
         // center the view if x/y is undefined, this will happen for spectators
         u.x = u.x || c.gameWidth / 2;

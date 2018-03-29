@@ -3,7 +3,10 @@
 const socketio = require('socket.io');
 const PlayerController = require('./player_controller');
 var util = require('./lib/util');
-const UsersController = require("./users_controller");
+var conf = require('../../config.json');
+const UserController = require("./user_controller");
+
+let userController = new UserController();
 
 exports.connect = function (io) {
     io.on('connection', function (socket) {
@@ -11,7 +14,7 @@ exports.connect = function (io) {
 
         var type = socket.handshake.query.type;
         var radius = util.massToRadius(conf.defaultPlayerMass);
-        var position = conf.newPlayerInitialPosition == 'farthest' ? util.uniformPosition(usersController.getUsers(), radius) : util.randomPosition(radius);
+        var position = conf.newPlayerInitialPosition == 'farthest' ? util.uniformPosition(userController.getUsers(), radius) : util.randomPosition(radius);
 
         var cells = [];
         var massTotal = 0;
@@ -42,7 +45,7 @@ exports.connect = function (io) {
                 global.sockets[player.id] = socket;
 
                 var radius = util.massToRadius(conf.defaultPlayerMass);
-                var position = conf.newPlayerInitialPosition == 'farthest' ? util.uniformPosition(usersController.getUsers(), radius) : util.randomPosition(radius);
+                var position = conf.newPlayerInitialPosition == 'farthest' ? util.uniformPosition(userController.getUsers(), radius) : util.randomPosition(radius);
 
                 player.x = position.x;
                 player.y = position.y;
@@ -64,7 +67,7 @@ exports.connect = function (io) {
                 currentPlayer = player;
                 currentPlayer.lastHeartbeat = new Date().getTime();
                 // global.users.push(currentPlayer);
-                usersController.addUser(currentPlayer);
+                userController.addUser(currentPlayer);
 
                 io.emit('playerJoin', {
                     name: currentPlayer.name
@@ -74,7 +77,7 @@ exports.connect = function (io) {
                     gameWidth: conf.gameWidth,
                     gameHeight: conf.gameHeight
                 });
-                console.log('Total players: ' + usersController.getUsersLength());
+                console.log('Total players: ' + userController.getUsersLength());
             }
 
         });
@@ -85,20 +88,20 @@ exports.connect = function (io) {
         });
 
         socket.on('respawn', function () {
-            let users = usersController.getUsers(),
+            let users = userController.getUsers(),
                 index = util.findIndex(users, currentPlayer.id);
             if (index > -1) {
-                usersController.removeUser(index);
+                userController.removeUser(index);
             }
             socket.emit('welcome', currentPlayer);
             console.log('[INFO] User ' + currentPlayer.name + ' respawned!');
         });
 
         socket.on('disconnect', function () {
-            let users = usersController.getUsers(),
+            let users = userController.getUsers(),
                 index = util.findIndex(users, currentPlayer.id);
             if (index > -1) {
-                usersController.removeUser(index);
+                userController.removeUser(index);
             }
             console.log('[INFO] User ' + currentPlayer.name + ' disconnected!');
 
