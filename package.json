@@ -4,8 +4,9 @@
   "description": "",
   "main": "src/server/server.js",
   "scripts": {
+    "build": "gulp build",
     "start": "gulp run",
-    "webpack": "webpack --watch -p",
+    "watch": "gulp watch",
     "test": "gulp test"
   },
   "repository": {
@@ -33,12 +34,14 @@
     "gulp-uglify": "^1.5.4",
     "gulp-util": "^3.0.7",
     "jshint": "^2.9.2",
+    "mock-socket": "^7.1.0",
     "mongodb": "^3.0.2",
     "react-game-kit": "^1.0.6",
     "redis": "^2.8.0",
     "sat": "^0.7.0",
     "socket.io": "^2.0.4",
     "socket.io-client": "^2.0.4",
+    "webpack": "^1.4.0",
     "webpack-stream": "^3.2.0"
   },
   "devDependencies": {

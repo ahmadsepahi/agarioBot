@@ -1,6 +1,5 @@
 'use strict';
 
-const socketio = require('socket.io');
 const PlayerController = require('./player_controller');
 var util = require('./lib/util');
 var conf = require('../../config.json');

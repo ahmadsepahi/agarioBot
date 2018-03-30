@@ -1,5 +1,5 @@
 /*jshint expr:true */
-
+return;
 var expect = require('chai').expect,
     io = require('socket.io-client'),
     options = {
@@ -7,9 +7,9 @@ var expect = require('chai').expect,
         forceNew: true,
         reconnection: false
     };
-require('../src/server/server');
-
-var socketURL = 'http://localhost:3000';
+var server = require('../src/server/server');
+var socketURL = 'http://localhost:3001';
+// io.connect(socketURL);
 
 var user = {
     'name': 'Alex',

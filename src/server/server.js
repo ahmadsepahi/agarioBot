@@ -88,7 +88,7 @@ function tickPlayer(currentPlayer) {
     }
 
     function collisionCheck(collision) {
-		let users = userController.getUsers();
+        let users = userController.getUsers();
 
         if (collision.aUser.mass > collision.bUser.mass * 1.1 && collision.aUser.radius > Math.sqrt(Math.pow(collision.aUser.x - collision.bUser.x, 2) + Math.pow(collision.aUser.y - collision.bUser.y, 2)) * 1.75) {
             console.log('[DEBUG] Killing user: ' + collision.bUser.id);
@@ -112,7 +112,7 @@ function tickPlayer(currentPlayer) {
     }
 
     for (var z = 0; z < currentPlayer.cells.length; z++) {
-        
+
         var currentCell = currentPlayer.cells[z];
         var playerCircle = new C(
             new V(currentCell.x, currentCell.y),
@@ -169,7 +169,7 @@ function moveloop() {
 }
 
 function gameloop() {
-	let users = userController.getUsers();
+    let users = userController.getUsers();
     if (users.length > 0) {
         users.sort(function (a, b) {
             return b.massTotal - a.massTotal;
@@ -190,7 +190,7 @@ function gameloop() {
 }
 
 function sendUpdates() {
-	let users = userController.getUsers();
+    let users = userController.getUsers();
     users.forEach(function (u) {
         // center the view if x/y is undefined, this will happen for spectators
         u.x = u.x || c.gameWidth / 2;
@@ -223,49 +223,48 @@ function sendUpdates() {
             });
 
         var visibleCells = users
-            .map(function (f) {
-                for (var z = 0; z < f.cells.length; z++) {
-                    if (f.cells[z].x + f.cells[z].radius > u.x - u.screenWidth / 2 - 20 &&
-                        f.cells[z].x - f.cells[z].radius < u.x + u.screenWidth / 2 + 20 &&
-                        f.cells[z].y + f.cells[z].radius > u.y - u.screenHeight / 2 - 20 &&
-                        f.cells[z].y - f.cells[z].radius < u.y + u.screenHeight / 2 + 20) {
-                        z = f.cells.lenth;
-                        if (f.id !== u.id) {
-                            return {
-                                id: f.id,
-                                x: f.x,
-                                y: f.y,
-                                cells: f.cells,
-                                massTotal: Math.round(f.massTotal),
-                                hue: f.hue,
-                                name: f.name
-                            };
-                        } else {
-                            return {
-                                x: f.x,
-                                y: f.y,
-                                cells: f.cells,
-                                massTotal: Math.round(f.massTotal),
-                                hue: f.hue,
-                            };
-                        }
+            .map(function (user) {
+                let cell = user.cells[0]
+                if (cell.x + cell.radius > u.x - u.screenWidth / 2 - 20 &&
+                    cell.x - cell.radius < u.x + u.screenWidth / 2 + 20 &&
+                    cell.y + cell.radius > u.y - u.screenHeight / 2 - 20 &&
+                    cell.y - cell.radius < u.y + u.screenHeight / 2 + 20) {
+                    if (user.id !== u.id) {
+                        return {
+                            id: user.id,
+                            x: user.x,
+                            y: user.y,
+                            cells: user.cells,
+                            massTotal: Math.round(user.massTotal),
+                            hue: user.hue,
+                            name: user.name
+                        };
+                    } else {
+                        return {
+                            x: user.x,
+                            y: user.y,
+                            cells: user.cells,
+                            massTotal: Math.round(user.massTotal),
+                            hue: user.hue,
+                        };
                     }
                 }
             })
-            .filter(function (f) {
-                return f;
+            .filter(function (user) {
+                return user;
             });
 
         global.sockets[u.id].emit('serverTellPlayerMove', visibleCells, visibleFood, visibleMass);
     });
 }
 
-setInterval(moveloop, 1000 / 60);
-setInterval(gameloop, 1000);
-setInterval(sendUpdates, 1000 / c.networkUpdateFactor);
+setInterval(moveloop, 600 / 60);
+setInterval(gameloop, 600);
+setInterval(sendUpdates, 600 / c.networkUpdateFactor);
 
-var ipaddress =  c.host;
-var serverport =  c.port;
-exports.server = http.listen( serverport, ipaddress, function() {
+// Don't touch, IP configurations.
+var ipaddress = process.env.OPENSHIFT_NODEJS_IP || process.env.IP || c.host;
+var serverport = process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || c.port;
+exports.server = http.listen(serverport, ipaddress, function () {
     console.log('[DEBUG] Listening on ' + ipaddress + ':' + serverport);
 });

@@ -1,21 +1,8 @@
 version: '3'
+
 services:
-  redis:
-    image: redis:latest
-
-  mongo:
-    image: mongo:latest
-    ports: 
-      - "27017:27017"
-
-  web:
-    volumes:
-      - .:/agario
-    build:
-      context: .
-      dockerfile: Dockerfile
-    depends_on:
-      - redis
+  agario:
+    build: .
     command: npm start
     ports:
-      - "8080:8080"
+      - '3000:3000'

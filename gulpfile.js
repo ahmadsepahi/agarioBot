@@ -28,7 +28,7 @@ gulp.task('lint', function () {
 
 gulp.task('build-client', ['lint', 'move-client'], function () {
   return gulp.src(['src/client/js/app.js'])
-    .pipe(uglify())
+    .pipe(uglify(), util.log)
     .pipe(webpack(require('./webpack.config.js')))
     .pipe(babel({
       presets: [
