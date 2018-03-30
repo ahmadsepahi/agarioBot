@@ -2,24 +2,22 @@
 
 let users = [];
 
-
 class UserController {
-  getUsers() {
-    return users;
-  }
+    getUsers() {
+        return users;
+    }
 
-  addUser(user) {
-    users.push(user);
-  }
+    addUser(user) {
+        users.push(user);
+    }
 
-  getUsersLength() {
-    return users.length;
-  }
+    getUsersLength() {
+        return users.length;
+    }
 
-  removeUser(index) {
-    users.splice(index, 1);
-  }
+    removeUser(index) {
+        users.splice(index, 1);
+    }
 }
-
 
 module.exports = UserController;

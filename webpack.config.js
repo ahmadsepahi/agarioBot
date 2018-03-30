@@ -1,20 +1,17 @@
 module.exports = {
-    entry: "./src/client/js/main.js",
+    entry: "./src/client/js/app.js",
     output: {
-        path: require("path").resolve("./src/client/js"),
+        path: require("path").resolve("./src/bin/client/js"),
         library: "app",
         filename: "app.js"
     },
     module: {
-        rules: [{
-            test: /\.jsx?$/,
-            exclude: /node_modules/,
-            use: {
-                loader: 'babel-loader',
-                options: {
-                    presets: ['es2015']
-                }
+        loaders: [
+            {
+                test: /\.jsx?$/,
+                exclude: /(node_modules|bower_components)/,
+                loader: 'babel'
             }
-        }]
+        ]
     }
 };
