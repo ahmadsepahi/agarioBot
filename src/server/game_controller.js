@@ -47,7 +47,6 @@ class GameController {
 
     let borderCalc = cell.radius / 3;
 
-    // calc new gameboard borders
     if (cell.x > config.gameWidth - borderCalc) {
       cell.x = config.gameWidth - borderCalc;
     }

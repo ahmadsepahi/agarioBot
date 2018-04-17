@@ -1,4 +1,5 @@
 module.exports = {
+    // Keys and other mathematical constants
     KEY_ESC: 27,
     KEY_ENTER: 13,
     KEY_FIREFOOD: 119,
@@ -16,6 +17,7 @@ module.exports = {
     enemySpin: -Math.PI,
     foodSides: 10,
 
+    // Canvas
     screenWidth: window.innerWidth,
     screenHeight: window.innerHeight,
     gameWidth: 0,

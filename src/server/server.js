@@ -5,7 +5,7 @@ var express = require('express');
 var app = express();
 var http = require('http').Server(app);
 const io = require('socket.io')(http);
-var SAT = require('sat'); //Library for for performing collision detection.
+var SAT = require('sat');
 
 // Import game settings.
 var c = require('../../config.json');
@@ -13,14 +13,20 @@ var c = require('../../config.json');
 // Import utilities.
 var util = require('./lib/util');
 
-const UserController = require('./user_controller');
+// Import quadtree.
+var quadtree = require('simple-quadtree');
+
+var tree = quadtree(0, 0, c.gameWidth, c.gameHeight);
+
+const PlayerController = require('./player_controller');
 const GameController = require('./game_controller');
 const {
     connect
 } = require("./sockets");
+const UsersController = require("./users_controller");
 
-let userController = new UserController();
-var game = new GameController();
+let usersController = new UsersController();
+let game = new GameController();
 
 connect(io);
 
@@ -28,11 +34,12 @@ global.sockets = {};
 
 var massFood = [];
 var food = [];
+// var sockets = {};
 
 var V = SAT.Vector;
 var C = SAT.Circle;
 
-var initMassLog = util.log(c.defaultPlayerMass, c.slowBase);
+const initMassLog = util.log(c.defaultPlayerMass, c.slowBase);
 
 app.use(express.static(__dirname + '/../client'));
 
@@ -88,7 +95,7 @@ function tickPlayer(currentPlayer) {
     }
 
     function collisionCheck(collision) {
-        let users = userController.getUsers();
+		let users = usersController.getUsers();
 
         if (collision.aUser.mass > collision.bUser.mass * 1.1 && collision.aUser.radius > Math.sqrt(Math.pow(collision.aUser.x - collision.bUser.x, 2) + Math.pow(collision.aUser.y - collision.bUser.y, 2)) * 1.75) {
             console.log('[DEBUG] Killing user: ' + collision.bUser.id);
@@ -99,7 +106,7 @@ function tickPlayer(currentPlayer) {
                     users[numUser].massTotal -= collision.bUser.mass;
                     users[numUser].cells.splice(collision.bUser.num, 1);
                 } else {
-                    userController.removeUser(numUser)
+                    usersController.removeUser(numUser)
                     io.emit('playerDied', {
                         name: collision.bUser.name
                     });
@@ -112,7 +119,7 @@ function tickPlayer(currentPlayer) {
     }
 
     for (var z = 0; z < currentPlayer.cells.length; z++) {
-
+        
         var currentCell = currentPlayer.cells[z];
         var playerCircle = new C(
             new V(currentCell.x, currentCell.y),
@@ -151,7 +158,11 @@ function tickPlayer(currentPlayer) {
         currentCell.radius = util.massToRadius(currentCell.mass);
         playerCircle.r = currentCell.radius;
 
-        let users = userController.getUsers();
+        tree.clear();
+        let users = usersController.getUsers();
+       
+        users.forEach(tree.put);
+        // console.log(tree);
         var playerCollisions = [];
 
         users.forEach(user => {
@@ -162,14 +173,14 @@ function tickPlayer(currentPlayer) {
 }
 
 function moveloop() {
-    let users = userController.getUsers();
+    let users = usersController.getUsers();
     users.forEach(user => {
         tickPlayer(user);
     });
 }
 
 function gameloop() {
-    let users = userController.getUsers();
+	let users = usersController.getUsers();
     if (users.length > 0) {
         users.sort(function (a, b) {
             return b.massTotal - a.massTotal;
@@ -190,7 +201,7 @@ function gameloop() {
 }
 
 function sendUpdates() {
-    let users = userController.getUsers();
+	let users = usersController.getUsers();
     users.forEach(function (u) {
         // center the view if x/y is undefined, this will happen for spectators
         u.x = u.x || c.gameWidth / 2;
@@ -225,30 +236,30 @@ function sendUpdates() {
         var visibleCells = users
             .map(function (user) {
                 let cell = user.cells[0]
-                if (cell.x + cell.radius > u.x - u.screenWidth / 2 - 20 &&
-                    cell.x - cell.radius < u.x + u.screenWidth / 2 + 20 &&
-                    cell.y + cell.radius > u.y - u.screenHeight / 2 - 20 &&
-                    cell.y - cell.radius < u.y + u.screenHeight / 2 + 20) {
-                    if (user.id !== u.id) {
-                        return {
-                            id: user.id,
-                            x: user.x,
-                            y: user.y,
-                            cells: user.cells,
-                            massTotal: Math.round(user.massTotal),
-                            hue: user.hue,
-                            name: user.name
-                        };
-                    } else {
-                        return {
-                            x: user.x,
-                            y: user.y,
-                            cells: user.cells,
-                            massTotal: Math.round(user.massTotal),
-                            hue: user.hue,
-                        };
+                    if (cell.x + cell.radius > u.x - u.screenWidth / 2 - 20 &&
+                        cell.x - cell.radius < u.x + u.screenWidth / 2 + 20 &&
+                        cell.y + cell.radius > u.y - u.screenHeight / 2 - 20 &&
+                        cell.y - cell.radius < u.y + u.screenHeight / 2 + 20) {
+                        if (user.id !== u.id) {
+                            return {
+                                id: user.id,
+                                x: user.x,
+                                y: user.y,
+                                cells: user.cells,
+                                massTotal: Math.round(user.massTotal),
+                                hue: user.hue,
+                                name: user.name
+                            };
+                        } else {
+                            return {
+                                x: user.x,
+                                y: user.y,
+                                cells: user.cells,
+                                massTotal: Math.round(user.massTotal),
+                                hue: user.hue,
+                            };
+                        }
                     }
-                }
             })
             .filter(function (user) {
                 return user;

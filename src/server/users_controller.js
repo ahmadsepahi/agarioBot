@@ -2,6 +2,7 @@
 
 let users = [];
 
+
 class UserController {
     getUsers() {
         return users;
@@ -19,5 +20,6 @@ class UserController {
         users.splice(index, 1);
     }
 }
+
 
 module.exports = UserController;
