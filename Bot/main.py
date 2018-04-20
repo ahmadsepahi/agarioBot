@@ -1,6 +1,6 @@
 from agario_bot.bot import BotClient
 import math
-b = BotClient('botname', speed_rate=1, host='localhost')
+b = BotClient('botname', speed_rate=1)
 
 surroundings = b.get_visible_surroundings()
 #0 - влево, 1- вверх, 2-вправо, 3-вниз
@@ -13,8 +13,6 @@ direction = -1
 x = 0 #координаты бота
 y = 0
 while True:
-
-
     surroundings = b.get_visible_surroundings()
    # print(surroundings['cells'])
  #   print(surroundings['cells'])
@@ -175,10 +173,3 @@ while True:
 
 
                 index = 0
-
-
-
-
-
-
-
