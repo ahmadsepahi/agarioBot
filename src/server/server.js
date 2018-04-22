@@ -104,7 +104,7 @@ function tickPlayer(currentPlayer) {
     }
 
     function collisionCheck(collision) {
-		let users = usersController.getUsers();
+        let users = usersController.getUsers();
 
         if (collision.aUser.mass > collision.bUser.mass * 1.1 && collision.aUser.radius > Math.sqrt(Math.pow(collision.aUser.x - collision.bUser.x, 2) + Math.pow(collision.aUser.y - collision.bUser.y, 2)) * 1.75) {
             console.log('[DEBUG] Killing user: ' + collision.bUser.id);
@@ -128,7 +128,7 @@ function tickPlayer(currentPlayer) {
     }
 
     for (var z = 0; z < currentPlayer.cells.length; z++) {
-        
+
         var currentCell = currentPlayer.cells[z];
         var playerCircle = new C(
             new V(currentCell.x, currentCell.y),
@@ -169,7 +169,7 @@ function tickPlayer(currentPlayer) {
 
         tree.clear();
         let users = usersController.getUsers();
-       
+
         users.forEach(tree.put);
         // console.log(tree);
         var playerCollisions = [];
@@ -189,7 +189,7 @@ function moveloop() {
 }
 
 function gameloop() {
-	let users = usersController.getUsers();
+    let users = usersController.getUsers();
     if (users.length > 0) {
         users.sort(function (a, b) {
             return b.massTotal - a.massTotal;
@@ -210,7 +210,7 @@ function gameloop() {
 }
 
 function sendUpdates() {
-	let users = usersController.getUsers();
+    let users = usersController.getUsers();
     users.forEach(function (u) {
         // center the view if x/y is undefined, this will happen for spectators
         u.x = u.x || c.gameWidth / 2;
@@ -245,30 +245,30 @@ function sendUpdates() {
         var visibleCells = users
             .map(function (user) {
                 let cell = user.cells[0]
-                    if (cell.x + cell.radius > u.x - u.screenWidth / 2 - 20 &&
-                        cell.x - cell.radius < u.x + u.screenWidth / 2 + 20 &&
-                        cell.y + cell.radius > u.y - u.screenHeight / 2 - 20 &&
-                        cell.y - cell.radius < u.y + u.screenHeight / 2 + 20) {
-                        if (user.id !== u.id) {
-                            return {
-                                id: user.id,
-                                x: user.x,
-                                y: user.y,
-                                cells: user.cells,
-                                massTotal: Math.round(user.massTotal),
-                                hue: user.hue,
-                                name: user.name
-                            };
-                        } else {
-                            return {
-                                x: user.x,
-                                y: user.y,
-                                cells: user.cells,
-                                massTotal: Math.round(user.massTotal),
-                                hue: user.hue,
-                            };
-                        }
+                if (cell.x + cell.radius > u.x - u.screenWidth / 2 - 20 &&
+                    cell.x - cell.radius < u.x + u.screenWidth / 2 + 20 &&
+                    cell.y + cell.radius > u.y - u.screenHeight / 2 - 20 &&
+                    cell.y - cell.radius < u.y + u.screenHeight / 2 + 20) {
+                    if (user.id !== u.id) {
+                        return {
+                            id: user.id,
+                            x: user.x,
+                            y: user.y,
+                            cells: user.cells,
+                            massTotal: Math.round(user.massTotal),
+                            hue: user.hue,
+                            name: user.name
+                        };
+                    } else {
+                        return {
+                            x: user.x,
+                            y: user.y,
+                            cells: user.cells,
+                            massTotal: Math.round(user.massTotal),
+                            hue: user.hue,
+                        };
                     }
+                }
             })
             .filter(function (user) {
                 return user;
