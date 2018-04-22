@@ -1,16 +1,22 @@
 /*jslint bitwise: true, node: true */
 'use strict';
 
+/*
+ * Авторы - Никита Кирилов, Алексей Костюченко 
+ * 
+ * Описание - Входной файл сервера. Здесь инициализируются все компоненты, подключаются сокеты и запускается игровой цикл.
+ */
+
 var express = require('express');
 var app = express();
 var http = require('http').Server(app);
 const io = require('socket.io')(http);
 var SAT = require('sat');
 
-// Import game settings.
+// Импорт настроек игры.
 var c = require('../../config.json');
 
-// Import utilities.
+// Импорт инструментов.
 var util = require('./lib/util');
 
 // Import quadtree.
@@ -18,7 +24,6 @@ var quadtree = require('simple-quadtree');
 
 var tree = quadtree(0, 0, c.gameWidth, c.gameHeight);
 
-const PlayerController = require('./player_controller');
 const GameController = require('./game_controller');
 const {
     connect
@@ -28,13 +33,12 @@ const UsersController = require("./users_controller");
 let usersController = new UsersController();
 let game = new GameController();
 
-connect(io);
+connect(io); // Подключение сокетов.
 
-global.sockets = {};
+global.sockets = {}; // Глобальный массив. Служит для хранение сокетов пользователей.
 
 var massFood = [];
 var food = [];
-// var sockets = {};
 
 var V = SAT.Vector;
 var C = SAT.Circle;
@@ -43,6 +47,10 @@ const initMassLog = util.log(c.defaultPlayerMass, c.slowBase);
 
 app.use(express.static(__dirname + '/../client'));
 
+/**
+ * @description Удаление пользователя за бездействие.
+ * @param {Object} currentPlayer текущий игрок.
+ */
 function tickPlayer(currentPlayer) {
     if (currentPlayer.lastHeartbeat < new Date().getTime() - c.maxHeartbeatInterval) {
         global.sockets[currentPlayer.id].emit('kick', 'Last heartbeat received over ' + c.maxHeartbeatInterval + ' ago.');
@@ -269,6 +277,7 @@ function sendUpdates() {
     });
 }
 
+// Периодичность, с которой срабатывают циклы игры
 setInterval(moveloop, 600 / 60);
 setInterval(gameloop, 600);
 setInterval(sendUpdates, 600 / c.networkUpdateFactor);

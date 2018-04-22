@@ -1,10 +1,20 @@
 'use strict';
 
+/*
+ * Авторы - Никита Кирилов, Алексей Костюченко
+ * 
+ * Описание - данный модуль отвечает за логику игры, добавление и удаление еды, передвижение игроков и перерасчет массы игроков.
+ */
+
 const config = require('../../config.json');
 const util = require('./lib/util');
 
 const initMassLog = util.log(config.defaultPlayerMass, config.slowBase);
 
+/**
+ * @author Никита Кирилов, Алексей Костюченко
+ * @description Класс отвечает за логику игры, добавление и удаление еды, передвижение игроков и перерасчет массы игроков.
+ */
 class GameController {
   constructor() {}
 
