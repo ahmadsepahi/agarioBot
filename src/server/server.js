@@ -79,14 +79,20 @@ function tickPlayer(currentPlayer) {
         return false;
     }
 
+    /**
+     * @function Проверка пользователя (игрока) на наличие взаимодействия с другими пользователями. Если было взаимодействие, то помещаем обоих пользователей в очередь на обработку столкновения.
+     * @param {Object} user Объект пользователя.
+     */
     function check(user) {
         for (var i = 0; i < user.cells.length; i++) {
             if (user.cells[i].mass > 10 && user.id !== currentPlayer.id) {
                 var response = new SAT.Response();
+                // Проверка столкновения двух игроков.
                 var collided = SAT.testCircleCircle(playerCircle,
                     new C(new V(user.cells[i].x, user.cells[i].y), user.cells[i].radius),
                     response);
                 if (collided) {
+                    // Если произошло столкновение, то ставим обработку их столкновения в очередь.
                     response.aUser = currentCell;
                     response.bUser = {
                         id: user.id,
@@ -103,30 +109,41 @@ function tickPlayer(currentPlayer) {
         return true;
     }
 
+    /**
+     * @function Проверка столкновения игроков.
+     * @param {*} collision столкновение
+     */
     function collisionCheck(collision) {
         let users = usersController.getUsers();
 
+        // Если у игрока 1, который наехал на игрока 2, масса и радиус больше, то игрок 2 считается съеденным.
         if (collision.aUser.mass > collision.bUser.mass * 1.1 && collision.aUser.radius > Math.sqrt(Math.pow(collision.aUser.x - collision.bUser.x, 2) + Math.pow(collision.aUser.y - collision.bUser.y, 2)) * 1.75) {
             console.log('[DEBUG] Killing user: ' + collision.bUser.id);
             console.log('[DEBUG] Collision info:');
-            var numUser = util.findIndex(users, collision.bUser.id);
+            var numUser = util.findIndex(users, collision.bUser.id); // Ищем индекс съеденного игрока.
             if (numUser > -1) {
-                if (users[numUser].cells.length > 1) {
-                    users[numUser].massTotal -= collision.bUser.mass;
-                    users[numUser].cells.splice(collision.bUser.num, 1);
+                if (users[numUser].cells.length > 1) { // Если массив копий не пустой.
+                    users[numUser].massTotal -= collision.bUser.mass; // Отнимаем массу от общей массы.
+                    users[numUser].cells.splice(collision.bUser.num, 1); // Убираем игрока и массива окружения.
                 } else {
-                    usersController.removeUser(numUser)
+                    usersController.removeUser(numUser); // Удляем игрока из списка пользователей.
+                    // Сообщаем игроку 2, что его съели.
                     io.emit('playerDied', {
                         name: collision.bUser.name
                     });
+
+                    // Отсылаем всем другим игрокам о смерте игрока 2
                     global.sockets[collision.bUser.id].emit('RIP');
                 }
             }
+
+            // Игрок 1 после съедения игрока 2 получает его массу.
             currentPlayer.massTotal += collision.bUser.mass;
             collision.aUser.mass += collision.bUser.mass;
         }
     }
 
+    // Просматриваем копии игрока
     for (var z = 0; z < currentPlayer.cells.length; z++) {
 
         var currentCell = currentPlayer.cells[z];
@@ -135,13 +152,16 @@ function tickPlayer(currentPlayer) {
             currentCell.radius
         );
 
+        // Формируем массив съеденной еды
         var foodEaten = food.map(funcFood)
             .reduce(function (a, b, c) {
                 return b ? a.concat(c) : a;
             }, []);
 
+        // Удаляем съеденную еду из общего массива еды
         foodEaten.forEach(deleteFood);
 
+        // Считаем, сколько прибавили в массе
         var massEaten = massFood.map(eatMass)
             .reduce(function (a, b, c) {
                 return b ? a.concat(c) : a;
@@ -161,6 +181,7 @@ function tickPlayer(currentPlayer) {
 
         if (typeof (currentCell.speed) == "undefined")
             currentCell.speed = 6.25;
+        // Переопределение массы и скорости игрока
         masaGanada += (foodEaten.length * c.foodMass);
         currentCell.mass += masaGanada;
         currentPlayer.massTotal += masaGanada;
@@ -171,7 +192,6 @@ function tickPlayer(currentPlayer) {
         let users = usersController.getUsers();
 
         users.forEach(tree.put);
-        // console.log(tree);
         var playerCollisions = [];
 
         users.forEach(user => {
@@ -209,6 +229,7 @@ function gameloop() {
     game.balanceMass(users, food);
 }
 
+// Отправка обновлений игроку
 function sendUpdates() {
     let users = usersController.getUsers();
     users.forEach(function (u) {
