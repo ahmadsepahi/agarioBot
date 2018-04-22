@@ -28,6 +28,7 @@ class GameController {
 
     let cell = player.cells[0];
 
+    // Направление движения.
     let target = {
       x: player.x - cell.x + player.target.x,
       y: player.y - cell.y + player.target.y
@@ -38,7 +39,7 @@ class GameController {
     // just angel between vectors
     let deg = Math.atan2(target.y, target.x);
 
-    // must slow down small players for balance sake
+    // Необходимо замедлить маленьких игроков для игрового баланса
     let slowdown;
     cell.speed <= 6.25 ? slowdown = util.log(cell.mass, config.slowBase) - initMassLog + 1 : slowdown = 1;
 
@@ -59,7 +60,7 @@ class GameController {
       cell.x += deltaX;
     }
 
-    let borderCalc = cell.radius / 3;
+    let borderCalc = cell.radius / 3; // Расчет ширины рамки окружности игрока
 
     if (cell.x > config.gameWidth - borderCalc) {
       cell.x = config.gameWidth - borderCalc;
@@ -81,6 +82,11 @@ class GameController {
     player.y = y / player.cells.length;
   }
 
+  /**
+   * @method Добавляет необходимое количестов еды в массив еды.
+   * @param {Array} food массив еды
+   * @param {number} toAdd количество еды, которое необходимо добавить.
+   */
   addFood(food, toAdd) {
     let radius = util.massToRadius(config.foodMass);
 
@@ -100,6 +106,11 @@ class GameController {
     return food;
   }
 
+  /**
+   * @method Удаляет необходимое количестов еды из массива еды.
+   * @param {Array} food массив еды
+   * @param {number} toRemove количество еды, которое необходимо удалить.
+   */
   removeFood(food, toRemove) {
     while (toRemove--) {
       food.pop();
@@ -108,10 +119,14 @@ class GameController {
     return food;
   }
 
+  /**
+   * @method Расчет общей массы игроков с целью балансировке еды на игровом поле. 
+   * @param {Array} users массив игроков.
+   * @param {Array} food массив еды.
+   */
   balanceMass(users, food) {
     let usersMass = users.map(user => { return user.massTotal; }).reduce((prev,current) => { return prev + current; }, 0);
     let totalMass = food.length * config.foodMass + usersMass;
-        
 
     let massDelta = config.gameMass - totalMass;
     let maxFoodDelta = config.maxFood - food.length;
