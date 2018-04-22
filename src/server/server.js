@@ -48,10 +48,11 @@ const initMassLog = util.log(c.defaultPlayerMass, c.slowBase);
 app.use(express.static(__dirname + '/../client'));
 
 /**
- * @description Удаление пользователя за бездействие.
+ * @description Проверка игрока.
  * @param {Object} currentPlayer текущий игрок.
  */
 function tickPlayer(currentPlayer) {
+    // Удаление игрока за бездействие.
     if (currentPlayer.lastHeartbeat < new Date().getTime() - c.maxHeartbeatInterval) {
         global.sockets[currentPlayer.id].emit('kick', 'Last heartbeat received over ' + c.maxHeartbeatInterval + ' ago.');
         global.sockets[currentPlayer.id].disconnect();

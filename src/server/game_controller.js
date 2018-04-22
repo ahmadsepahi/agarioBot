@@ -18,6 +18,10 @@ const initMassLog = util.log(config.defaultPlayerMass, config.slowBase);
 class GameController {
   constructor() {}
 
+  /**
+   * @method Метод, определяющий движение игрока. Здесь задается направление и скорость.
+   * @param {Object} player игрок.
+   */
   movePlayer(player) {
     let x = 0; 
     let y = 0;
