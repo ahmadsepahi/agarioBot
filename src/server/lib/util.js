@@ -41,7 +41,9 @@ exports.log = (function () {
  * @param {Object} p2 вторая фигура.
  */
 exports.getDistance = function (p1, p2) {
-    return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2)) - p1.radius - p2.radius;
+    try {
+        return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2)) - p1.radius - p2.radius;
+    } catch (e) {}
 };
 
 /**
