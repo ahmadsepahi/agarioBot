@@ -23,10 +23,10 @@ class Canvas {
         global.canvas = this;
     }
 
-    // Function called when a key is pressed, will change direction if arrow key.
+    // Функция, вызываемая при нажатии клавиши, меняющая направление.
     directionDown(event) {
     	var key = event.which || event.keyCode;
-        var self = this.parent; // have to do this so we are not using the cv object
+        var self = this.parent; 
     	if (self.directional(key)) {
     		self.directionLock = true;
     		if (self.newDirection(key, self.directions, true)) {
@@ -36,10 +36,10 @@ class Canvas {
     	}
     }
 
-    // Function called when a key is lifted, will change direction if arrow key.
+    //  Функция, вызываемая при отпускании клавиши, меняющая направление.
     directionUp(event) {
     	var key = event.which || event.keyCode;
-    	if (this.directional(key)) { // this == the actual class
+    	if (this.directional(key)) { 
     		if (this.newDirection(key, this.directions, false)) {
     			this.updateTarget(this.directions);
     			if (this.directions.length === 0) this.directionLock = false;
@@ -48,7 +48,7 @@ class Canvas {
     	}
     }
 
-    // Updates the direction array including information about the new direction.
+    // Обновляет массив направлений, включая информацию о новом направлении.
     newDirection(direction, list, isAddition) {
     	var result = false;
     	var found = false;
@@ -57,13 +57,13 @@ class Canvas {
     			found = true;
     			if (!isAddition) {
     				result = true;
-    				// Removes the direction.
+    				
     				list.splice(i, 1);
     			}
     			break;
     		}
     	}
-    	// Adds the direction.
+    	// Добавляет направление.
     	if (isAddition && found === false) {
     		result = true;
     		list.push(direction);
@@ -72,7 +72,7 @@ class Canvas {
     	return result;
     }
 
-    // Updates the target according to the directions in the directions array.
+    // Обновляет цель в соответствии с указаниями в массиве направлений.
     updateTarget(list) {
     	this.target = { x : 0, y: 0 };
     	var directionHorizontal = 0;
@@ -104,13 +104,6 @@ class Canvas {
     	return key == global.KEY_DOWN || key == global.KEY_UP || global.KEY_DOWN1 || key == global.KEY_UP1;
     }
 
-    // Register when the mouse goes off the canvas.
-    outOfBounds() {
-        if (!global.continuity) {
-            this.parent.target = { x : 0, y: 0 };
-            global.target = this.parent.target;
-        }
-    }
 
    
 }

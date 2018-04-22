@@ -32,7 +32,7 @@ function startGame(type) {
     global.socket = socket;
 }
 
-// Checks if the nick chosen contains valid alphanumeric characters (and underscores).
+// Валидация имени
 function validNick() {
     var regex = /^\w*$/;
     debug('Regex Test', regex.exec(playerNameInput.value));
@@ -51,7 +51,7 @@ window.onload = function() {
 
     btn.onclick = function () {
 
-        // Checks if the nick is valid.
+        // Проверка имени
         if (validNick()) {
             nickErrorText.style.opacity = 0;
             startGame('player');
@@ -74,7 +74,6 @@ window.onload = function() {
     });
 };
 
-// TODO: Break out into GameControls.
 
 var foodConfig = {
     border: 0,
@@ -99,7 +98,6 @@ var player = {
 global.player = player;
 
 var foods = [];
-// var fireFood = [];
 var users = [];
 var target = {x: player.x, y: player.y};
 global.target = target;
@@ -186,10 +184,9 @@ function setupSocket(socket) {
         }
         users = userData;
         foods = foodsList;
-        // fireFood = massList;
     });
 
-    // Death.
+    // Смерть
     socket.on('RIP', function () {
         global.gameStart = false;
         global.died = true;
@@ -231,6 +228,7 @@ function drawCircle(centerX, centerY, radius, sides) {
     graph.fill();
 }
 
+//Отрисовка еды Нагуслаев Николай
 function drawFood(food) {
     graph.strokeStyle = 'hsl(198.6, 100%, 45%)';
     graph.fillStyle = 'hsl(198.6, 100%, 50%)';
@@ -240,15 +238,7 @@ function drawFood(food) {
                food.radius, global.foodSides);
 }
 
-// function drawFireFood(mass) {
-//     graph.strokeStyle = 'hsl(' + mass.hue + ', 100%, 45%)';
-//     graph.fillStyle = 'hsl(' + mass.hue + ', 100%, 50%)';
-//     graph.lineWidth = playerConfig.border+10;
-//     drawCircle(mass.x - player.x + global.screenWidth / 2,
-//                mass.y - player.y + global.screenHeight / 2,
-//                mass.radius-5, 18 + (~~(mass.masa/5)));
-// }
-
+// Отрисовка игроков Рубан Анна
 function drawPlayers(order) {
     var start = {
         x: player.x - (global.screenWidth / 2),
@@ -349,7 +339,7 @@ function drawPlayers(order) {
 function valueInRange(min, max, value) {
     return Math.min(max, Math.max(min, value));
 }
-
+//Отрисовка поля
 function drawgrid() {
      graph.lineWidth = 1;
      graph.strokeStyle = global.lineColor;
@@ -369,7 +359,7 @@ function drawgrid() {
     graph.stroke();
     graph.globalAlpha = 1;
 }
-
+//Отрисовка границ Нагуслаев Николай
 function drawborder() {
     graph.lineWidth = 1;
     graph.strokeStyle = playerConfig.borderColor;
@@ -429,7 +419,7 @@ window.cancelAnimFrame = (function(handle) {
     return  window.cancelAnimationFrame     ||
             window.mozCancelAnimationFrame;
 })();
-
+// Цикл игры 
 function animloop() {
     global.animLoopHandle = window.requestAnimFrame(animloop);
     gameLoop();
@@ -452,7 +442,6 @@ function gameLoop() {
 
             drawgrid();
             foods.forEach(drawFood);
-            // fireFood.forEach(drawFireFood);
 
             if (global.borderDraw) {
                 drawborder();

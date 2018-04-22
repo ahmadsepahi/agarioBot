@@ -1,5 +1,5 @@
 module.exports = {
-    // Keys and other mathematical constants
+    // Кнопки и другие математические константы
     KEY_ESC: 27,
     KEY_ENTER: 13,
     KEY_FIREFOOD: 119,
