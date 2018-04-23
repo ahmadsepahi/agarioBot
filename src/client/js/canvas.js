@@ -1,5 +1,5 @@
 var global = require('./global');
-
+//Рубан Анна
 class Canvas {
     constructor(params) {
         this.directionLock = false;

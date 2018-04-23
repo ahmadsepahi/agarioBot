@@ -12,7 +12,7 @@ var debug = function(args) {
     }
 };
 
-function startGame(type) {
+function startGame(type) { // обработка начала игры Нагуслае Николай
     global.playerName = playerNameInput.value.replace(/(<([^>]+)>)/ig, '').substring(0,25);
     global.playerType = type;
 
@@ -32,7 +32,7 @@ function startGame(type) {
     global.socket = socket;
 }
 
-// Валидация имени
+// Валидация имени Рубан Анна
 function validNick() {
     var regex = /^\w*$/;
     debug('Regex Test', regex.exec(playerNameInput.value));
@@ -49,7 +49,7 @@ window.onload = function() {
         startGame('spectate');
     };
 
-    btn.onclick = function () {
+    btn.onclick = function () { //обработка кнопки старт
 
         // Проверка имени
         if (validNick()) {
@@ -60,7 +60,7 @@ window.onload = function() {
         }
     };
 
-    playerNameInput.addEventListener('keypress', function (e) {
+    playerNameInput.addEventListener('keypress', function (e) { //обработка нажатия enter для старта
         var key = e.which || e.keyCode;
 
         if (key === global.KEY_ENTER) {
@@ -87,7 +87,7 @@ var playerConfig = {
     defaultSize: 30
 };
 
-var player = {
+var player = { //структура для игрока Рубан Анна
     id: -1,
     x: global.screenWidth / 2,
     y: global.screenHeight / 2,
@@ -107,7 +107,7 @@ window.canvas = new Canvas();
 var c = window.canvas.cv;
 var graph = c.getContext('2d');
 
-
+//установка сокета (передача сообщения через вебсокеты) Нагуслаев Николай
 // socket stuff.
 function setupSocket(socket) {
     // Handle ping.
@@ -208,7 +208,7 @@ function setupSocket(socket) {
         socket.close();
     });
 }
-
+//отрисовка шариков еды Нагуслаев Николай
 function drawCircle(centerX, centerY, radius, sides) {
     var theta = 0;
     var x = 0;
@@ -253,7 +253,7 @@ function drawPlayers(order) {
         var x=0;
         var y=0;
 
-        var points = 30 + ~~(cellCurrent.mass/5);
+        var points = 30 + ~~(cellCurrent.mass/5); //расчет размера Нагуслаев Николай
         var increase = Math.PI * 2 / points;
 
         graph.strokeStyle = 'hsl(' + userCurrent.hue + ', 100%, 45%)';
@@ -339,7 +339,7 @@ function drawPlayers(order) {
 function valueInRange(min, max, value) {
     return Math.min(max, Math.max(min, value));
 }
-//Отрисовка поля
+//Отрисовка поля Нагуслаев Николай
 function drawgrid() {
      graph.lineWidth = 1;
      graph.strokeStyle = global.lineColor;
@@ -419,23 +419,23 @@ window.cancelAnimFrame = (function(handle) {
     return  window.cancelAnimationFrame     ||
             window.mozCancelAnimationFrame;
 })();
-// Цикл игры 
+// Цикл игры  Рубан Анна
 function animloop() {
     global.animLoopHandle = window.requestAnimFrame(animloop);
     gameLoop();
 }
-
+//отрисовка основных параметров и логика основной игры Рубан Анна
 function gameLoop() {
     if (global.died) {
         graph.fillStyle = '#333333';
-        graph.fillRect(0, 0, global.screenWidth, global.screenHeight);
+        graph.fillRect(0, 0, global.screenWidth, global.screenHeight);  //отрисовка фона Нагуслаев Николай
 
         graph.textAlign = 'center';
         graph.fillStyle = '#FFFFFF';
-        graph.font = 'bold 30px sans-serif';
-        graph.fillText('You died!', global.screenWidth / 2, global.screenHeight / 2);
+        graph.font = 'bold 30px sans-serif';$
+        graph.fillText('You died!', global.screenWidth / 2, global.scre$enHeight / 2);
     }
-    else if (!global.disconnected) {
+    else if (!global.disconnected) { //обработка событий(соединение с сервером) Рубан Анна
         if (global.gameStart) {
             graph.fillStyle = global.backgroundColor;
             graph.fillRect(0, 0, global.screenWidth, global.screenHeight);
@@ -446,7 +446,7 @@ function gameLoop() {
             if (global.borderDraw) {
                 drawborder();
             }
-            var orderMass = [];
+            var orderMass = []; //масса Нагуслаев Николай
             for(var i=0; i<users.length; i++) {
                 for(var j=0; j<users[i].cells.length; j++) {
                     orderMass.push({
@@ -495,7 +495,7 @@ function gameLoop() {
 }
 
 window.addEventListener('resize', resize);
-
+//Изменение размера поля Рубан Анна
 function resize() {
     if (!socket) return;
 
