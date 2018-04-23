@@ -1,34 +1,34 @@
 var io = require('socket.io-client');
-var Canvas = require('./canvas');
+var Canvas = require('./canvas'); //подключение модулей
 var global = require('./global');
 
-var playerNameInput = document.getElementById('playerNameInput');
+var playerNameInput = document.getElementById('playerNameInput'); //переменная с index.html Имя пользователя
 var socket;
 var reason;
 
-var debug = function(args) {
+var debug = function(args) { //для вывода в консоль браузера сообщения 
     if (console && console.log) {
         console.log(args);
     }
 };
 
 function startGame(type) { // обработка начала игры Нагуслае Николай
-    global.playerName = playerNameInput.value.replace(/(<([^>]+)>)/ig, '').substring(0,25);
+    global.playerName = playerNameInput.value.replace(/(<([^>]+)>)/ig, '').substring(0,25); 
     global.playerType = type;
 
-    global.screenWidth = window.innerWidth;
+    global.screenWidth = window.innerWidth; //установка начала параметров
     global.screenHeight = window.innerHeight;
 
-    document.getElementById('startMenuWrapper').style.maxHeight = '0px';
-    document.getElementById('gameAreaWrapper').style.opacity = 1;
+    document.getElementById('startMenuWrapper').style.maxHeight = '0px'; //сворачиваем экран меню
+    document.getElementById('gameAreaWrapper').style.opacity = 1; //открываем игру
     if (!socket) {
-        socket = io({query:"type=" + type});
-        setupSocket(socket);
+        socket = io({query:"type=" + type}); //кидаем на сервер тип игрока(игрок или наблюдатель)
+        setupSocket(socket); //установка сокета
     }
     if (!global.animLoopHandle)
-        animloop();
-    socket.emit('respawn');
-    window.canvas.socket = socket;
+        animloop(); //цикл игры
+    socket.emit('respawn'); //отправить что произошло "перерождение"
+    window.canvas.socket = socket; //установка сокета
     global.socket = socket;
 }
 
@@ -41,15 +41,15 @@ function validNick() {
 
 window.onload = function() {
 
-    var btn = document.getElementById('startButton'),
+    var btn = document.getElementById('startButton'), //обработка нажатия клавиш
         btnS = document.getElementById('spectateButton'),
-        nickErrorText = document.querySelector('#startMenu .input-error');
-
-    btnS.onclick = function () {
+        nickErrorText = document.querySelector('#startMenu .input-error'); //для вывода ошибок
+ 
+    btnS.onclick = function () { //наблюдатель
         startGame('spectate');
     };
 
-    btn.onclick = function () { //обработка кнопки старт
+    btn.onclick = function () { //обработка кнопки старт игры
 
         // Проверка имени
         if (validNick()) {
@@ -75,11 +75,11 @@ window.onload = function() {
 };
 
 
-var foodConfig = {
+var foodConfig = { //для границ еды
     border: 0,
 };
 
-var playerConfig = {
+var playerConfig = { //Внешние параметры игрока(первоначальные, типа цвет, границы и т.д.) 
     border: 6,
     textColor: '#FFFFFF',
     textBorder: '#000000',
@@ -97,38 +97,38 @@ var player = { //структура для игрока Рубан Анна
 };
 global.player = player;
 
-var foods = [];
-var users = [];
-var target = {x: player.x, y: player.y};
+var foods = []; //еда
+var users = []; //пользователи
+var target = {x: player.x, y: player.y}; //цель
 global.target = target;
 
-window.canvas = new Canvas();
+window.canvas = new Canvas(); //создание класса канваса для отрисовки графики
 
-var c = window.canvas.cv;
-var graph = c.getContext('2d');
+var c = window.canvas.cv; 
+var graph = c.getContext('2d');//используем 2д 
 
 //установка сокета (передача сообщения через вебсокеты) Нагуслаев Николай
 // socket stuff.
 function setupSocket(socket) {
     // Handle ping.
-    socket.on('pongcheck', function () {
+    socket.on('pongcheck', function () { //проходит ли пинг
         var latency = Date.now() - global.startPingTime;
         debug('Latency: ' + latency + 'ms');
     });
 
     // Handle error.
-    socket.on('connect_failed', function () {
+    socket.on('connect_failed', function () { //когда не возможно подрубиться
         socket.close();
         global.disconnected = true;
     });
 
-    socket.on('disconnect', function () {
+    socket.on('disconnect', function () { //отсоединился
         socket.close();
         global.disconnected = true;
     });
 
     // Handle connection.
-    socket.on('welcome', function (playerSettings) {
+    socket.on('welcome', function (playerSettings) { //если все ок, присвоить все основные  параметры
 
         player = playerSettings;
         player.name = global.playerName;
@@ -143,7 +143,7 @@ function setupSocket(socket) {
 		c.focus();
     });
 
-    socket.on('gameSetup', function(data) {
+    socket.on('gameSetup', function(data) { //начало игры, установка поля 
         global.gameWidth = data.gameWidth;
         global.gameHeight = data.gameHeight;
         resize();
@@ -162,7 +162,7 @@ function setupSocket(socket) {
     });
 
     // Handle movement.
-    socket.on('serverTellPlayerMove', function (userData, foodsList, massList) {
+    socket.on('serverTellPlayerMove', function (userData, foodsList, massList) { //перемещение игроков (установка всех параметров, где и что находится)
         var playerData;
         for(var i =0; i< userData.length; i++) {
             if(typeof(userData[i].id) == "undefined") {
@@ -170,7 +170,7 @@ function setupSocket(socket) {
                 i = userData.length;
             }
         }
-        if(global.playerType == 'player') {
+        if(global.playerType == 'player') { 
             var xoffset = player.x - playerData.x;
             var yoffset = player.y - playerData.y;
 
@@ -195,7 +195,7 @@ function setupSocket(socket) {
             document.getElementById('startMenuWrapper').style.maxHeight = '1000px';
             global.died = false;
             if (global.animLoopHandle) {
-                window.cancelAnimationFrame(global.animLoopHandle);
+                window.cancelAnimationFrame(global.animLoopHandle); //закончить анимацию
                 global.animLoopHandle = undefined;
             }
         }, 2500);
@@ -214,25 +214,25 @@ function drawCircle(centerX, centerY, radius, sides) {
     var x = 0;
     var y = 0;
 
-    graph.beginPath();
+    graph.beginPath(); //начало отрисовки
 
     for (var i = 0; i < sides; i++) {
         theta = (i / sides) * 2 * Math.PI;
-        x = centerX + radius * Math.sin(theta);
+        x = centerX + radius * Math.sin(theta); //вычисление координат х и у
         y = centerY + radius * Math.cos(theta);
-        graph.lineTo(x, y);
+        graph.lineTo(x, y); //отрисовка с помощью линий
     }
 
     graph.closePath();
-    graph.stroke();
+    graph.stroke(); //закрашивание с бортиками
     graph.fill();
 }
 
 //Отрисовка еды Нагуслаев Николай
 function drawFood(food) {
-    graph.strokeStyle = 'hsl(198.6, 100%, 45%)';
-    graph.fillStyle = 'hsl(198.6, 100%, 50%)';
-    graph.lineWidth = foodConfig.border;
+    graph.strokeStyle = 'hsl(198.6, 100%, 45%)'; 
+    graph.fillStyle = 'hsl(198.6, 100%, 50%)'; 
+    graph.lineWidth = foodConfig.border; 
     drawCircle(food.x - player.x + global.screenWidth / 2,
                food.y - player.y + global.screenHeight / 2,
                food.radius, global.foodSides);
@@ -241,22 +241,22 @@ function drawFood(food) {
 // Отрисовка игроков Рубан Анна
 function drawPlayers(order) {
     var start = {
-        x: player.x - (global.screenWidth / 2),
+        x: player.x - (global.screenWidth / 2), //установка начальных координат
         y: player.y - (global.screenHeight / 2)
     };
 
     for(var z=0; z<order.length; z++)
     {
-        var userCurrent = users[order[z].nCell];
+        var userCurrent = users[order[z].nCell]; //установка основных параметров
         var cellCurrent = users[order[z].nCell].cells[order[z].nDiv];
 
         var x=0;
         var y=0;
 
         var points = 30 + ~~(cellCurrent.mass/5); //расчет размера Нагуслаев Николай
-        var increase = Math.PI * 2 / points;
+        var increase = Math.PI * 2 / points; //увеличение шарика
 
-        graph.strokeStyle = 'hsl(' + userCurrent.hue + ', 100%, 45%)';
+        graph.strokeStyle = 'hsl(' + userCurrent.hue + ', 100%, 45%)'; //цвет
         graph.fillStyle = 'hsl(' + userCurrent.hue + ', 100%, 50%)';
         graph.lineWidth = playerConfig.border;
 
@@ -272,10 +272,10 @@ function drawPlayers(order) {
 
         for (var i = 0; i < points; i++) {
 
-            x = cellCurrent.radius * Math.cos(global.spin) + circle.x;
+            x = cellCurrent.radius * Math.cos(global.spin) + circle.x; 
             y = cellCurrent.radius * Math.sin(global.spin) + circle.y;
             if(typeof(userCurrent.id) == "undefined") {
-                x = valueInRange(-userCurrent.x + global.screenWidth / 2,
+                x = valueInRange(-userCurrent.x + global.screenWidth / 2, //вычисление диапозона
                                  global.gameWidth - userCurrent.x + global.screenWidth / 2, x);
                 y = valueInRange(-userCurrent.y + global.screenHeight / 2,
                                  global.gameHeight - userCurrent.y + global.screenHeight / 2, y);
@@ -285,14 +285,14 @@ function drawPlayers(order) {
                 y = valueInRange(-cellCurrent.y - player.y + global.screenHeight / 2 + (cellCurrent.radius/3),
                                  global.gameHeight - cellCurrent.y + global.gameHeight - player.y + global.screenHeight / 2 - (cellCurrent.radius/3) , y);
             }
-            global.spin += increase;
+            global.spin += increase; //размер
             xstore[i] = x;
             ystore[i] = y;
         }
   
-        for (i = 0; i < points; ++i) {
+        for (i = 0; i < points; ++i) { //отрисовка игроков
             if (i === 0) {
-                graph.beginPath();
+                graph.beginPath(); 
                 graph.moveTo(xstore[i], ystore[i]);
             } else if (i > 0 && i < points - 1) {
                 graph.lineTo(xstore[i], ystore[i]);
@@ -336,7 +336,7 @@ function drawPlayers(order) {
     }
 }
 
-function valueInRange(min, max, value) {
+function valueInRange(min, max, value) { //вычисление диапазона 
     return Math.min(max, Math.max(min, value));
 }
 //Отрисовка поля Нагуслаев Николай
@@ -405,7 +405,7 @@ function drawborder() {
     }
 }
 
-window.requestAnimFrame = (function() {
+window.requestAnimFrame = (function() { //для анимации(синхронизация с графическим процессором и съедает меньше ресурсов CPU)
     return  window.requestAnimationFrame       ||
             window.webkitRequestAnimationFrame ||
             window.mozRequestAnimationFrame    ||
@@ -415,7 +415,7 @@ window.requestAnimFrame = (function() {
             };
 })();
 
-window.cancelAnimFrame = (function(handle) {
+window.cancelAnimFrame = (function(handle) { //прекращение анимации
     return  window.cancelAnimationFrame     ||
             window.mozCancelAnimationFrame;
 })();
@@ -426,7 +426,7 @@ function animloop() {
 }
 //отрисовка основных параметров и логика основной игры Рубан Анна
 function gameLoop() {
-    if (global.died) {
+    if (global.died) {//если умер
         graph.fillStyle = '#333333';
         graph.fillRect(0, 0, global.screenWidth, global.screenHeight);  //отрисовка фона Нагуслаев Николай
 
@@ -436,7 +436,7 @@ function gameLoop() {
         graph.fillText('You died!', global.screenWidth / 2, global.scre$enHeight / 2);
     }
     else if (!global.disconnected) { //обработка событий(соединение с сервером) Рубан Анна
-        if (global.gameStart) {
+        if (global.gameStart) { //если начала игры, отрисовка фона, сетки и т.д.
             graph.fillStyle = global.backgroundColor;
             graph.fillRect(0, 0, global.screenWidth, global.screenHeight);
 
@@ -449,22 +449,22 @@ function gameLoop() {
             var orderMass = []; //масса Нагуслаев Николай
             for(var i=0; i<users.length; i++) {
                 for(var j=0; j<users[i].cells.length; j++) {
-                    orderMass.push({
+                    orderMass.push({ //установка массы для всех
                         nCell: i,
                         nDiv: j,
                         mass: users[i].cells[j].mass
                     });
                 }
             }
-            orderMass.sort(function(obj1, obj2) {
+            orderMass.sort(function(obj1, obj2) { //разница масс
                 return obj1.mass - obj2.mass;
             });
 
-            drawPlayers(orderMass);
+            drawPlayers(orderMass); //отрисовка игра в соответствие с массой
             socket.emit('heartbeat', window.canvas.target); // playerSendTarget "Heartbeat".
 
         } else {
-            graph.fillStyle = '#333333';
+            graph.fillStyle = '#333333'; //если игра закончена
             graph.fillRect(0, 0, global.screenWidth, global.screenHeight);
 
             graph.textAlign = 'center';
@@ -472,7 +472,7 @@ function gameLoop() {
             graph.font = 'bold 30px sans-serif';
             graph.fillText('Game Over!', global.screenWidth / 2, global.screenHeight / 2);
         }
-    } else {
+    } else { //выкинуло
         graph.fillStyle = '#333333';
         graph.fillRect(0, 0, global.screenWidth, global.screenHeight);
 
