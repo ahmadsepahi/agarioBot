@@ -197,6 +197,35 @@ div {
     -webkit-box-shadow: none;
     box-shadow: none;
 }
+#surveyBotton
+{
+    box-sizing: border-box;
+    margin: auto;
+    width: 100px;
+    height: 30px;
+    position: fixed;
+    color: Black;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+    background: White;
+    border-bottom: 0px solid White;
+    cursor: pointer;
+    -webkit-box-shadow: inset 0 2px White;
+    box-shadow: inset 0 2px White;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    text-align: center;
+
+}
+#surveyBotton:active,#surveyBotton:hover {
+
+    top:2px;
+    text-align: center;
+    background: White;
+    outline: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
 
 #startMenuWrapper {
     -webkit-transition: max-height 1s;

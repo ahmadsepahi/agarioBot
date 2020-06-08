@@ -13,30 +13,34 @@
     <!-- Меню пользователя Нагуслаев Николай-->
     <div id="gameAreaWrapper">
         <canvas tabindex="1" id="cvs"></canvas>
+
     </div>
+
     <div id="startMenuWrapper">
+        <button id="surveyBotton" style="visibility:visible">Take Survey</button>
         <div id="startMenu">
             <p>Agar.io by KI14-06B</p>
             
-            <input type="text" tabindex="0" autofocus placeholder="Введите имя игрока" id="playerNameInput" maxlength="25" />
-            <b class="input-error">Недопустимые символы в имени игрока</b>
+            <input type="text" tabindex="0" autofocus placeholder="Enter player name" id="playerNameInput" maxlength="25" />
+            <b class="input-error">Invalid characters in player name</b>
             <br />
-            <a onclick="document.getElementById('spawn_cell').play();"><button id="startButton">Играть</button></a>
-            <button id="spectateButton">Наблюдать</button>
+            <a onclick="document.getElementById('spawn_cell').play();"><button id="startButton">Play</button></a>
+            <button id="spectateButton">Watch</button>
+
             <br />
             <!-- Модальное окно с инструкцией Рубан Анна-->
-            <a href="#openModal" ><h2 class="ins">Как играть?</h2></a>
+            <a href="#openModal" ><h2 class="ins">How to Play?</h2></a>
         </div>
     </div>
     <div id="openModal" class="modalDialog">
         <div>
-            <a href="#close" title="Закрыть" class="close">X</a>
+            <a href="#close" title="Close" class="close">X</a>
     
-      <h3>Как играть</h3>
+      <h3>How to Play</h3>
       <ul>
-          <li>С помощью клавиатуры, а именно с помощью клавиш(стрелок или a,w,s,d), передвигай шарик.</li>
-          <li>Ешь меньшего по размеру героя либо еду, разбросанную по полю.</li>
-          <li>Останься в живых.</li>
+          <li>Using the keyboard, namely using the keys (arrows or a, w, s, d), move the ball.</li>
+          <li>Eat a smaller hero or food scattered across the field.</li>
+          <li>Stay alive.</li>
       </ul>
   </div>
 </div>
