@@ -10,14 +10,19 @@ const PlayerController = require('./player_controller');
 var util = require('./lib/util');
 var conf = require('../../config.json');
 const UsersController = require("./users_controller");
+//const runBot = require('../../Bot/runBot.sh');
+
+
 
 let usersController = new UsersController();
-
+const { exec } = require('child_process');
 /**
  * @description Инициализация и подключение к сокетам.
  * @param {SocketIO.Server} io 
  */
 exports.connect = function (io) {
+
+
     /**
      * @description Событие срабатывает автоматически при подключении нового пользователя.
      */
@@ -45,8 +50,12 @@ exports.connect = function (io) {
         /**
          * @description Событие служит для проверки установления соединения. Используется при тестировании.
          */
-        socket.on('pingcheck', function () {
-            socket.emit('pongcheck');
+
+        socket.on('survey', function () {
+            app.route(surveyRouter);
+        });
+        socket.on('pingcheck', function (cnt) {
+            socket.emit('pongcheck',cnt);
         });
 
         /**
@@ -118,6 +127,20 @@ exports.connect = function (io) {
             // отправка сообщения текущему пользователю об успешном старте игры            
             socket.emit('welcome', currentPlayer);
             console.log('[INFO] User ' + currentPlayer.name + ' respawned!');
+
+            const { spawn } = require('child_process')
+            spawn('sh', ['/Users/ahmad/agario/Bot/runBot.sh']);
+
+/*            exec('sh /Users/ahmad/agario/Bot/runBot.sh', (err, stdout, stderr) => {
+                if (err) {
+                    //some err occurred
+                    console.error(err)
+                } else {
+                    // the *entire* stdout and stderr (buffered)
+                    console.log(`stdout: ${stdout}`);
+                    console.log(`stderr: ${stderr}`);
+                }
+            });*/
         });
 
         // Событие срабатывает автоматически при отключении пользователя от сервера.

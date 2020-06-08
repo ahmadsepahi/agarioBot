@@ -19,6 +19,42 @@ var c = require('../../config.json');
 // Импорт инструментов.
 var util = require('./lib/util');
 
+
+//Iadded
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+var bodyParser = require('body-parser');
+var jsonParser = bodyParser.json();
+var urlencodeParser = bodyParser.urlencoded({ extended: false });
+app.use(urlencodeParser);
+app.use(jsonParser);
+
+var path = require('path');
+var cookieParser = require('cookie-parser');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var surveyRouter = require("../../routes/survey");
+//console.log(__dirname);
+app.set('views', path.join(__dirname, "../../views"));
+app.set('view engine', 'pug');
+let QUESTIONS;
+QUESTIONS={
+    1: "1. Responsiveness: how responsive the game is"
+};
+app.use('/survey', surveyRouter);
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+var bodyParser = require('body-parser');
+var jsonParser = bodyParser.json();
+var urlencodeParser = bodyParser.urlencoded({ extended: false });
+app.use(urlencodeParser);
+app.use(jsonParser);
+//
 // Import quadtree.
 var quadtree = require('simple-quadtree');
 

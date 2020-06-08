@@ -1,6 +1,6 @@
 from agario_bot.bot import BotClient
 import math
-b = BotClient('botname', speed_rate=1)
+b = BotClient('bot_', speed_rate=1)
 
 surroundings = b.get_visible_surroundings()
 #0 - влево, 1- вверх, 2-вправо, 3-вниз

@@ -30,7 +30,13 @@ module.exports = {
     kicked: false,
     continuity: false,
     startPingTime: 0,
-    toggleMassState: 0,
+    toggleMassState: 1,
     backgroundColor: '#f2fbff',
     lineColor: '#000000',
+
+
+    // For latency
+    pingLatency: 1000000,
+    cnt: 0,
+    timeArray: {},
 };
