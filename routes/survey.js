@@ -9,26 +9,27 @@ var dbinfo = c.mongoDBinfo;
 
 
 const dbHostname = "104.197.184.233";
-const dbPort = 3000;
+const dbPort = 3001;
 const dbPath = "/db";
 /*const dbHostname = dbinfo.dbHost;
 const dbPort = dbinfo.dbPort;
 const dbPath = dbinfo.dbPath;*/
+
 
 QUESTIONS={
     1: "1. Responsiveness: how responsive the game is"
 };
 
 
-router.get('/:playerName/:ping/:point/:totalTime', function(req, res){
+router.get('/:playerName/:ping/:point/:totalTime/:code', function(req, res){
     /*console.log(req.params.ping);
     console.log(req.params.point);
     console.log(req.params.totalTime);*/
     //console.log(req);
-    res.render('question', { title: 'Survey', playerName: req.params.playerName, ping:req.params.ping, point: req.params.point,  totalTime:req.params.totalTime, questions:QUESTIONS});
+    res.render('question', { title: 'Survey', playerName: req.params.playerName, ping:req.params.ping, point: req.params.point,  totalTime:req.params.totalTime, code:req.params.code, questions:QUESTIONS});
 });
 
-router.post('/:playerName/:ping/:point/:totalTime', function(req, res){
+router.post('/:playerName/:ping/:point/:totalTime/:code', function(req, res){
 
     //var result = {"ping": req.params.ping, "point": req.params.point, "remoteTime": new Date(), "clientIP":req.headers['x-forwarded-for'] || req.connection.remoteAddress, "agent":req.get('user-agent')};
     var result = JSON.parse(JSON.stringify(req.body));
@@ -41,6 +42,8 @@ router.post('/:playerName/:ping/:point/:totalTime', function(req, res){
     result.remoteTime = new Date();
     result.clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     result.agent = req.get('user-agent');
+    console.log(global.code);
+    result.code = req.params.code;
     //console.log('two');
     // console.log(req);
     // console.log(req.get('user-agent'));
@@ -77,5 +80,7 @@ router.get('/speedtest', function(req, res){
     // console.log("req:"+req);
     res.sendStatus(200);
 });
+
+
 
 module.exports = router;

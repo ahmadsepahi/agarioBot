@@ -7,10 +7,12 @@ var playerNameInput = document.getElementById('playerNameInput'); //переме
 var socket;
 var reason;
 
-var pingInterval = 500;
+var pingInterval = 100;
 var finScore=0;
 var finTime=0;
 var lastPing = 0;
+var finCode = 'null';
+var checkPing = true
 
 var debug = function(args) { //для вывода в консоль браузера сообщения 
     if (console && console.log) {
@@ -49,7 +51,7 @@ function validNick() {
 
 function survey(){
 
-    window.open("/survey/"+global.playerName+"/"+global.pingLatency+"/"+finScore+"/"+finTime, "_self");
+    window.open("/survey/"+global.playerName+"/"+global.pingLatency+"/"+finScore+"/"+finTime+"/"+finCode, "_self");
 
     if (!socket) {
         console.log("socket is not defined");
@@ -168,6 +170,7 @@ function setupSocket(socket) {
     });
 
     socket.on('disconnect', function () { //отсоединился
+        console.log('disconnect');
         socket.close();
         global.disconnected = true;
     });
@@ -186,6 +189,8 @@ function setupSocket(socket) {
         debug('Game started at: ' + global.gameStart);
  
 		c.focus();
+
+
     });
 
     socket.on('gameSetup', function(data) { //начало игры, установка поля 
@@ -195,12 +200,14 @@ function setupSocket(socket) {
     });
 
     socket.on('playerDied', function (data) {
+        console.log('playerDied');
         // TODO сообщение
         //window.chat.addSystemLine('{GAME} - <b>' + (data.name.length < 1 ? 'An unnamed cell' : data.name) + '</b> was eaten.');
 
     });
 
     socket.on('playerDisconnect', function (data) {
+        console.log('playerDisconnect');
         // TODO сообщение
         //window.chat.addSystemLine('{GAME} - <b>' + (data.name.length < 1 ? 'An unnamed cell' : data.name) + '</b> disconnected.');
 
@@ -238,9 +245,12 @@ function setupSocket(socket) {
     });
 
     // Смерть
-    socket.on('RIP', function () {
+    socket.on('RIP', function (data) {
+        console.log('RIP');
         global.gameStart = false;
         global.died = true;
+        global.kicked = true;
+        reason = data;
         window.setTimeout(function() {
             document.getElementById('gameAreaWrapper').style.opacity = 0;
             document.getElementById('startMenuWrapper').style.maxHeight = '1000px';
@@ -252,7 +262,8 @@ function setupSocket(socket) {
         }, 2500);
     });
 
-    socket.on('kick', function (data, score, time) {
+    socket.on('kick', function (data, score, time,code) {
+        global.code = code;
         global.gameStart = false;
         reason = data;
         global.kicked = true;
@@ -260,6 +271,7 @@ function setupSocket(socket) {
         console.log('score: '+score + ' and time: '+time);
         finScore = score;
         finTime = time;
+        finCode = code;
         document.getElementById("surveyBotton").style.visibility="visible";
         if(Date.now() - global.gameStart > pingInterval ){
             checkLatency();
@@ -304,9 +316,12 @@ function drawFood(food) {
 // Отрисовка игроков Рубан Анна
 function drawPlayers(order) {
 
-    if(Date.now() - lastPing > pingInterval && global.cnt < 20){
+    if(checkPing == true && global.cnt < 20 && Date.now() - lastPing > pingInterval){
         checkLatency();
         lastPing = Date.now();
+    }
+    else if(checkPing == true && global.cnt > 20) {
+        checkPing = false;
     }
 
     var start = {
@@ -503,6 +518,9 @@ function gameLoop() {
         graph.fillStyle = '#FFFFFF';
         graph.font = 'bold 30px sans-serif';$
         graph.fillText('You died!', global.screenWidth / 2, global.scre$enHeight / 2);
+
+        graph.fillText('You were kicked for:', global.screenWidth / 2, global.screenHeight / 2 - 20);
+        graph.fillText(reason, global.screenWidth / 2, global.screenHeight / 2 + 20);
     }
     else if (!global.disconnected) { //обработка событий(соединение с сервером) Рубан Анна
         if (global.gameStart) { //если начала игры, отрисовка фона, сетки и т.д.

@@ -5,17 +5,16 @@
  * 
  * Описание - В данном модуле определены все события сокетов. Здесь отлавливаются сообщения от игроков и отправляются системные сообщения игрокам.
  */
-
+var path = require('path');
 const PlayerController = require('./player_controller');
 var util = require('./lib/util');
 var conf = require('../../config.json');
 const UsersController = require("./users_controller");
-//const runBot = require('../../Bot/runBot.sh');
+var runBot = path.join(__dirname,"../../Bot/runBot.sh");
 
 
 
 let usersController = new UsersController();
-const { exec } = require('child_process');
 /**
  * @description Инициализация и подключение к сокетам.
  * @param {SocketIO.Server} io 
@@ -94,6 +93,7 @@ exports.connect = function (io) {
                 player.hue = Math.round(Math.random() * 360);
                 currentPlayer = player;
                 currentPlayer.lastHeartbeat = new Date().getTime();
+                currentPlayer.startTime = new Date().getTime();
                 usersController.addUser(currentPlayer);
 
                 // отпрака сообщения текущему пользователю об успешном подключении.
@@ -128,8 +128,10 @@ exports.connect = function (io) {
             socket.emit('welcome', currentPlayer);
             console.log('[INFO] User ' + currentPlayer.name + ' respawned!');
 
-            const { spawn } = require('child_process')
-            spawn('sh', ['/Users/ahmad/agario/Bot/runBot.sh']);
+            const { spawn } = require('child_process');
+            //spawn('sh', ['/Users/ahmad/agario/Bot/runBot.sh']);
+            spawn('sh', [runBot]);
+
 
 /*            exec('sh /Users/ahmad/agario/Bot/runBot.sh', (err, stdout, stderr) => {
                 if (err) {

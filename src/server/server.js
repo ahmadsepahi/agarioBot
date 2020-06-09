@@ -87,7 +87,36 @@ app.use(express.static(__dirname + '/../client'));
  * @description Проверка игрока.
  * @param {Object} currentPlayer текущий игрок.
  */
+function makeid(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
+
 function tickPlayer(currentPlayer) {
+
+    var code = makeid(8);
+    if(c.finishScoreActive == true){
+        if(currentPlayer.massTotal >= c.finishScore){
+            var finTime = new Date().getTime() - currentPlayer.startTime;
+            var massTotal = Math.floor(currentPlayer.massTotal);
+            sockets[currentPlayer.id].emit('kick','You got score: '+massTotal+ ' in '+ finTime+ ' ms. Your Code is: '+code, massTotal, finTime, code);
+            sockets[currentPlayer.id].disconnect();
+        }
+    }
+    if(c.finishTimeActive == true){
+        if(new Date().getTime() - currentPlayer.startTime >= c.finishTime){
+            var finScore = currentPlayer.massTotal;
+            var massTotal = Math.floor(currentPlayer.massTotal);
+            sockets[currentPlayer.id].emit('kick','Time is up and You got score: '+massTotal+ ' in '+ c.finishTime+' ms. Your Code is: '+code, massTotal, c.finishTime, code);
+            sockets[currentPlayer.id].disconnect();
+        }
+    }
+
     // Удаление игрока за бездействие.
     if (currentPlayer.lastHeartbeat < new Date().getTime() - c.maxHeartbeatInterval) {
         global.sockets[currentPlayer.id].emit('kick', 'Last heartbeat received over ' + c.maxHeartbeatInterval + ' ago.');
@@ -169,7 +198,8 @@ function tickPlayer(currentPlayer) {
                     });
 
                     // Отсылаем всем другим игрокам о смерте игрока 2
-                    global.sockets[collision.bUser.id].emit('RIP');
+
+                    global.sockets[collision.bUser.id].emit('RIP', 'Collision');
                 }
             }
 

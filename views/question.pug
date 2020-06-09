@@ -36,10 +36,11 @@ html
                     return false;
                 }
             }
+
     body
 
         h3=title
-        form(class="form-group" id="answer" action="/survey/"+playerName+"/"+ping+"/"+point+"/"+totalTime method="POST" onsubmit="return validateForm()" name="surveyform")
+        form(class="form-group" id="answer" action="/survey/"+playerName+"/"+ping+"/"+point+"/"+totalTime+"/"+code method="POST" onsubmit="return validateForm()" name="surveyform")
             each question,index in questions
                 div(class="card")
                     div(class="card-body")
@@ -55,6 +56,7 @@ html
                             input(class="form-check-input" type="radio" name="inlineRadioOptions"+index id="inlineRadio5"+index value=5)
                             label(class="form-check-label" for="inlineRadio10") 5 (Strongly satisfied)
             div(class="card")
+                p(class="code")="Your Code is: "+code
                 div(class="card-body")
                     //p(class="lead") User ID
                     //input(type="string" class="form-control" name="userId" id="userId" placeholder="User ID")

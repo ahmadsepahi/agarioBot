@@ -41,6 +41,7 @@ class PlayerController {
             x: 0,
             y: 0
         }
+        startTime: new Date().getTime()
     }
 }
 
