@@ -63,7 +63,6 @@ function survey(){
 
     debug('PingLATANCY5: ' + global.pingLatency);
 
-
 }
 
 window.onload = function() {
