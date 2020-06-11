@@ -1,4 +1,4 @@
 #!/bin/bash
 
-pkill -f main.py
+pkill -f agario_main_bot.py
 pkill -f scary_bot.py
