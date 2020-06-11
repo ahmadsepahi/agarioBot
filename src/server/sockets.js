@@ -10,8 +10,10 @@ const PlayerController = require('./player_controller');
 var util = require('./lib/util');
 var conf = require('../../config.json');
 const UsersController = require("./users_controller");
-var runBot = path.join(__dirname,"../../Bot/runBot.sh");
 
+const {spawn} = require('child_process');
+var runBot = path.join(__dirname,"../../Bot/runBot.sh");
+var clean = path.join(__dirname, "../../Bot/clean.sh");
 
 
 let usersController = new UsersController();
@@ -127,10 +129,7 @@ exports.connect = function (io) {
             // отправка сообщения текущему пользователю об успешном старте игры            
             socket.emit('welcome', currentPlayer);
             console.log('[INFO] User ' + currentPlayer.name + ' respawned!');
-
-            const { spawn } = require('child_process');
-            //spawn('sh', ['/Users/ahmad/agario/Bot/runBot.sh']);
-            spawn('sh', [runBot]);
+            spawn('bash', [runBot]);
 
 
 /*            exec('sh /Users/ahmad/agario/Bot/runBot.sh', (err, stdout, stderr) => {
@@ -154,6 +153,11 @@ exports.connect = function (io) {
             }
 
             console.log('[INFO] User ' + currentPlayer.name + ' disconnected!');
+
+            if(currentPlayer.type ==='player') {
+                //spawn('sh', ['/Users/ahmad/agario/Bot/runBot.sh']);
+                spawn('bash', [clean]);
+            }
 
             // Отправка всем остальным пользователям об отключении текущего пользователя.
             socket.broadcast.emit('playerDisconnect', {

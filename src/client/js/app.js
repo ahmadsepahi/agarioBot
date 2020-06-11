@@ -259,10 +259,10 @@ function setupSocket(socket) {
                 window.cancelAnimationFrame(global.animLoopHandle); //закончить анимацию
                 global.animLoopHandle = undefined;
             }
-        }, 2500);
+        }, 5000);
     });
 
-    socket.on('kick', function (data, score, time,code) {
+    socket.on('kick', function (data, score, time,code,done) {
         global.code = code;
         global.gameStart = false;
         reason = data;
@@ -272,14 +272,27 @@ function setupSocket(socket) {
         finScore = score;
         finTime = time;
         finCode = code;
-        document.getElementById("surveyBotton").style.visibility="visible";
+        if(done){
+            document.getElementById("surveyBotton").style.visibility="visible";
+        }
+
         if(Date.now() - global.gameStart > pingInterval ){
             checkLatency();
             pingInterval *= 1.5;
             //checkPing();
         }
-        document.getElementById("surveyBotton").style.visibility="visible";
-
+        //document.getElementById("surveyBotton").style.visibility="visible";
+        if(done == false){
+            window.setTimeout(function() {
+                document.getElementById('gameAreaWrapper').style.opacity = 0;
+                document.getElementById('startMenuWrapper').style.maxHeight = '1000px';
+                global.died = false;
+                if (global.animLoopHandle) {
+                    window.cancelAnimationFrame(global.animLoopHandle); //закончить анимацию
+                    global.animLoopHandle = undefined;
+                }
+            }, 5000);
+        }
 
     });
 }
@@ -519,7 +532,8 @@ function gameLoop() {
         graph.font = 'bold 30px sans-serif';$
         graph.fillText('You died!', global.screenWidth / 2, global.scre$enHeight / 2);
 
-        graph.fillText('You were kicked for:', global.screenWidth / 2, global.screenHeight / 2 - 20);
+        //graph.fillText('You were kicked for:', global.screenWidth / 2, global.screenHeight / 2 - 20);
+        graph.fillText('', global.screenWidth / 2, global.screenHeight / 2 - 20);
         graph.fillText(reason, global.screenWidth / 2, global.screenHeight / 2 + 20);
     }
     else if (!global.disconnected) { //обработка событий(соединение с сервером) Рубан Анна
@@ -568,7 +582,8 @@ function gameLoop() {
         graph.font = 'bold 30px sans-serif';
         if (global.kicked) {
             if (reason !== '') {
-                graph.fillText('You were kicked for:', global.screenWidth / 2, global.screenHeight / 2 - 20);
+                //graph.fillText('You were kicked for:', global.screenWidth / 2, global.screenHeight / 2 - 20);
+                graph.fillText('', global.screenWidth / 2, global.screenHeight / 2 - 20);
                 graph.fillText(reason, global.screenWidth / 2, global.screenHeight / 2 + 20);
             }
             else {

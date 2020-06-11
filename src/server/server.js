@@ -22,6 +22,8 @@ var util = require('./lib/util');
 
 //Iadded
 
+const httpDB = require('http');
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -97,10 +99,69 @@ function makeid(length) {
     return result;
 }
 
+
+var dbinfo = c.mongoDBinfo;
+const dbHostname = dbinfo.dbHost;
+const dbPort = dbinfo.dbPort_server;
+const dbPath = dbinfo.dbPath;
+var timeToGetfinScore = -1;
+function postToDB(massTotal, finTime, code, name , id, timeFinScore){
+    var result = {"point": massTotal, "totalTime":finTime, "code": code, "remoteTime": new Date(), "playerName": name, "playerID": id, "timeToGetfinScore": timeFinScore};
+    var post_data = JSON.stringify(result);
+    //console.log(post_data);
+    var post_options = {
+        hostname: dbHostname,
+        port: dbPort,
+        path: dbPath,
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': post_data.length
+        }
+    };
+
+    // Set up the request
+    var post_req = httpDB.request(post_options, function(resp) {
+        resp.setEncoding('utf8');
+/*        resp.on('data', function (chunk) {
+            // console.log('Response: ' + chunk);
+            res.redirect('/');
+        });*/
+    });
+
+    // post the data
+    post_req.write(post_data);
+    post_req.end();
+}
+
+
 function tickPlayer(currentPlayer) {
 
-    var code = makeid(8);
-    if(c.finishScoreActive == true){
+    if(c.finishScoreActive == true && c.finishTimeActive == true){
+        var finTime = new Date().getTime() - currentPlayer.startTime;
+        var massTotal = Math.floor(currentPlayer.massTotal);
+        if(massTotal >= c.finishScore && finTime >= c.finishTime){
+            var code = makeid(8);
+            //var finTime = new Date().getTime() - currentPlayer.startTime;
+            //var massTotal = Math.floor(currentPlayer.massTotal);
+            sockets[currentPlayer.id].emit('kick','You got score: '+massTotal+ ' in '+ c.finishTime+ ' ms. Your Code is: '+code, massTotal, c.finishTime, code, true);
+            sockets[currentPlayer.id].disconnect();
+
+            postToDB(massTotal, c.finishTime, code, currentPlayer.name, currentPlayer.id, timeToGetfinScore);
+            console.log(currentPlayer.name);
+            console.log(currentPlayer.id);
+
+        }
+        else if(massTotal < c.finishScore && finTime >= c.finishTime){
+            sockets[currentPlayer.id].emit('kick','Unfortunately you cannot take the survey since your score is: '+massTotal +' and it is lower than the enough score: '+c.finishScore+ ' in '+ c.finishTime+ ' ms.', massTotal, finTime, code, false);
+            sockets[currentPlayer.id].disconnect();
+        }
+        else if(timeToGetfinScore == -1 && massTotal >= c.finishScore){
+            timeToGetfinScore = finTime;
+        }
+    }
+
+    /*if(c.finishScoreActive == true && c.finishTimeActive == false){
         if(currentPlayer.massTotal >= c.finishScore){
             var finTime = new Date().getTime() - currentPlayer.startTime;
             var massTotal = Math.floor(currentPlayer.massTotal);
@@ -108,14 +169,14 @@ function tickPlayer(currentPlayer) {
             sockets[currentPlayer.id].disconnect();
         }
     }
-    if(c.finishTimeActive == true){
+    if(c.finishTimeActive == true && c.finishScoreActive == false){
         if(new Date().getTime() - currentPlayer.startTime >= c.finishTime){
             var finScore = currentPlayer.massTotal;
             var massTotal = Math.floor(currentPlayer.massTotal);
             sockets[currentPlayer.id].emit('kick','Time is up and You got score: '+massTotal+ ' in '+ c.finishTime+' ms. Your Code is: '+code, massTotal, c.finishTime, code);
             sockets[currentPlayer.id].disconnect();
         }
-    }
+    }*/
 
     // Удаление игрока за бездействие.
     if (currentPlayer.lastHeartbeat < new Date().getTime() - c.maxHeartbeatInterval) {
@@ -199,13 +260,22 @@ function tickPlayer(currentPlayer) {
 
                     // Отсылаем всем другим игрокам о смерте игрока 2
 
-                    global.sockets[collision.bUser.id].emit('RIP', 'Collision');
+                    global.sockets[collision.bUser.id].emit('RIP', 'Unfortunately you cannot take the survey due to Collision');
+/*                    if(currentPlayer.type ==='player'){
+                        var clean = path.join(__dirname, "../../Bot/clean.sh");
+                        const {spawn} = require('child_process');
+                        spawn('bash', [clean]);
+                    }*/
+
                 }
             }
 
             // Игрок 1 после съедения игрока 2 получает его массу.
             currentPlayer.massTotal += collision.bUser.mass;
             collision.aUser.mass += collision.bUser.mass;
+
+
+
         }
     }
 

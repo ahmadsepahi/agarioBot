@@ -5,19 +5,21 @@ var cors = require('cors');
 var router = express.Router();
 
 var c = require('../config.json');
-var dbinfo = c.mongoDBinfo;
 
 
-const dbHostname = "104.197.184.233";
+
+/*const dbHostname = "104.197.184.233";
 const dbPort = 3001;
-const dbPath = "/db";
-/*const dbHostname = dbinfo.dbHost;
-const dbPort = dbinfo.dbPort;
-const dbPath = dbinfo.dbPath;*/
+const dbPath = "/db";*/
+var dbinfo = c.mongoDBinfo;
+const dbHostname = dbinfo.dbHost;
+const dbPort = dbinfo.dbPort_client;
+const dbPath = dbinfo.dbPath;
 
 
 QUESTIONS={
-    1: "1. Responsiveness: how responsive the game is"
+
+    1: "Responsiveness: If a game is responsive, you should be able to control your subject smoothly with no perceived delay or unexpected behavior. Please rate how responsive you feel the game is."
 };
 
 
@@ -42,9 +44,7 @@ router.post('/:playerName/:ping/:point/:totalTime/:code', function(req, res){
     result.remoteTime = new Date();
     result.clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     result.agent = req.get('user-agent');
-    console.log(global.code);
     result.code = req.params.code;
-    //console.log('two');
     // console.log(req);
     // console.log(req.get('user-agent'));
 
