@@ -175,7 +175,7 @@ function tickPlayer(currentPlayer) {
             var massTotal = Math.floor(currentPlayer.massTotal);
             sockets[currentPlayer.id].emit('kick','Time is up and You got score: '+massTotal+ ' in '+ c.finishTime+' ms. Your Code is: '+code, massTotal, c.finishTime, code);
             sockets[currentPlayer.id].disconnect();
-        }
+        }  
     }*/
 
     // Удаление игрока за бездействие.
