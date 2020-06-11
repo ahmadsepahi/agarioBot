@@ -41,8 +41,8 @@ class PlayerController {
             x: 0,
             y: 0
         }
-        startTime: new Date().getTime()
-        timeToGet: -1       //means time it needs to reach the base finish score
+        startTime: new Date().getTime();
+        this.timeToGet= -1;
     }
 }
 

@@ -106,6 +106,7 @@ const dbPort = dbinfo.dbPort_server;
 const dbPath = dbinfo.dbPath;
 //var timeToGetfinScore = -1;
 function postToDB(massTotal, finTime, code, name , id, timeFinScore){
+    //console.log('TIMEFINSCORE' + timeFinScore);
     var result = {"point": massTotal, "totalTime":finTime, "code": code, "remoteTime": new Date(), "playerName": name, "playerID": id, "timeToGetfinScore": timeFinScore};
     var post_data = JSON.stringify(result);
     //console.log(post_data);
@@ -148,8 +149,8 @@ function tickPlayer(currentPlayer) {
             sockets[currentPlayer.id].disconnect();
 
             postToDB(massTotal, c.finishTime, code, currentPlayer.name, currentPlayer.id, currentPlayer.timetoGet);
-            console.log(currentPlayer.name);
-            console.log(currentPlayer.id);
+            //console.log(currentPlayer.name);
+            //console.log(currentPlayer.id);
 
         }
         else if(massTotal < c.finishScore && finTime >= c.finishTime){
@@ -157,7 +158,9 @@ function tickPlayer(currentPlayer) {
             sockets[currentPlayer.id].disconnect();
         }
         else if(currentPlayer.timetoGet == -1 && massTotal >= c.finishScore){
+
             currentPlayer.timetoGet = finTime;
+            //console.log('TIMETIME' + currentPlayer.timetoGet);
         }
     }
 
@@ -244,8 +247,8 @@ function tickPlayer(currentPlayer) {
 
         // Если у игрока 1, который наехал на игрока 2, масса и радиус больше, то игрок 2 считается съеденным.
         if (collision.aUser.mass > collision.bUser.mass * 1.1 && collision.aUser.radius > Math.sqrt(Math.pow(collision.aUser.x - collision.bUser.x, 2) + Math.pow(collision.aUser.y - collision.bUser.y, 2)) * 1.75) {
-            console.log('[DEBUG] Killing user: ' + collision.bUser.id);
-            console.log('[DEBUG] Collision info:');
+            //console.log('[DEBUG] Killing user: ' + collision.bUser.id);
+            //console.log('[DEBUG] Collision info:');
             var numUser = util.findIndex(users, collision.bUser.id); // Ищем индекс съеденного игрока.
             if (numUser > -1) {
                 if (users[numUser].cells.length > 1) { // Если массив копий не пустой.

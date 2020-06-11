@@ -28,7 +28,7 @@ exports.connect = function (io) {
      * @description Событие срабатывает автоматически при подключении нового пользователя.
      */
     io.on('connection', function (socket) {
-        console.log('A user connected!', socket.handshake.query.type);
+        //console.log('A user connected!', socket.handshake.query.type);
 
         var type = socket.handshake.query.type;
         var radius = util.massToRadius(conf.defaultPlayerMass);
@@ -63,14 +63,14 @@ exports.connect = function (io) {
          * @description Событие срабатывает, когда пользователь начинает новую игру.
          */
         socket.on('gotit', function (player) {
-            console.log('[INFO] Player ' + player.name + ' connecting!');
+            //console.log('[INFO] Player ' + player.name + ' connecting!');
 
             if (!util.validNick(player.name)) {
                 // Удаляем игрока, если его никнейм не прошел проверку.
                 socket.emit('kick', 'Invalid username.');
                 socket.disconnect();
             } else {
-                console.log('[INFO] Player ' + player.name + ' connected!');
+                //console.log('[INFO] Player ' + player.name + ' connected!');
                 global.sockets[player.id] = socket;
 
                 var radius = util.massToRadius(conf.defaultPlayerMass);
@@ -91,6 +91,7 @@ exports.connect = function (io) {
                         radius: radius
                     }];
                     player.massTotal = conf.defaultPlayerMass;
+                    player.timetoGet = -1;
                 }
                 player.hue = Math.round(Math.random() * 360);
                 currentPlayer = player;
@@ -107,7 +108,7 @@ exports.connect = function (io) {
                     gameWidth: conf.gameWidth,
                     gameHeight: conf.gameHeight
                 });
-                console.log('Total players: ' + usersController.getUsersLength());
+                //console.log('Total players: ' + usersController.getUsersLength());
             }
         });
 
@@ -128,7 +129,7 @@ exports.connect = function (io) {
 
             // отправка сообщения текущему пользователю об успешном старте игры            
             socket.emit('welcome', currentPlayer);
-            console.log('[INFO] User ' + currentPlayer.name + ' respawned!');
+            //console.log('[INFO] User ' + currentPlayer.name + ' respawned!');
             spawn('bash', [runBot]);
 
 
@@ -152,7 +153,7 @@ exports.connect = function (io) {
                 usersController.removeUser(index);
             }
 
-            console.log('[INFO] User ' + currentPlayer.name + ' disconnected!');
+            //console.log('[INFO] User ' + currentPlayer.name + ' disconnected!');
 
             if(currentPlayer.type ==='player') {
                 //spawn('sh', ['/Users/ahmad/agario/Bot/runBot.sh']);
