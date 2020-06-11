@@ -104,7 +104,7 @@ var dbinfo = c.mongoDBinfo;
 const dbHostname = dbinfo.dbHost;
 const dbPort = dbinfo.dbPort_server;
 const dbPath = dbinfo.dbPath;
-var timeToGetfinScore = -1;
+//var timeToGetfinScore = -1;
 function postToDB(massTotal, finTime, code, name , id, timeFinScore){
     var result = {"point": massTotal, "totalTime":finTime, "code": code, "remoteTime": new Date(), "playerName": name, "playerID": id, "timeToGetfinScore": timeFinScore};
     var post_data = JSON.stringify(result);
@@ -147,7 +147,7 @@ function tickPlayer(currentPlayer) {
             sockets[currentPlayer.id].emit('kick','You got score: '+massTotal+ ' in '+ c.finishTime+ ' ms. Your Code is: '+code, massTotal, c.finishTime, code, true);
             sockets[currentPlayer.id].disconnect();
 
-            postToDB(massTotal, c.finishTime, code, currentPlayer.name, currentPlayer.id, timeToGetfinScore);
+            postToDB(massTotal, c.finishTime, code, currentPlayer.name, currentPlayer.id, currentPlayer.timetoGet);
             console.log(currentPlayer.name);
             console.log(currentPlayer.id);
 
@@ -156,8 +156,8 @@ function tickPlayer(currentPlayer) {
             sockets[currentPlayer.id].emit('kick','Unfortunately you cannot take the survey since your score is: '+massTotal +' and it is lower than the enough score: '+c.finishScore+ ' in '+ c.finishTime+ ' ms.', massTotal, finTime, code, false);
             sockets[currentPlayer.id].disconnect();
         }
-        else if(timeToGetfinScore == -1 && massTotal >= c.finishScore){
-            timeToGetfinScore = finTime;
+        else if(currentPlayer.timetoGet == -1 && massTotal >= c.finishScore){
+            currentPlayer.timetoGet = finTime;
         }
     }
 
