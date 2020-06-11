@@ -19,4 +19,5 @@ COPY . .
 
 ENTRYPOINT ["npm","start"]
 
+#Don't change this port unless you change the bot default port
 EXPOSE 3000
