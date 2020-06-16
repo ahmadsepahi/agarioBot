@@ -1,6 +1,8 @@
 FROM node:latest
 
 WORKDIR /usr/src/app
+#remember to make changes in runBot.sh to be compatible
+#uncomment /usr/src/app in runBot.sh
 
 RUN apt-get update -y
 RUN apt-get install python3 -y

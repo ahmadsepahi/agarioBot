@@ -16,7 +16,7 @@
   "maxFood": 50,
   "slowBase": 4.75,
   "networkUpdateFactor": 40,
-  "maxHeartbeatInterval": 120000,
+  "maxHeartbeatInterval": 60000,
   "foodUniformDisposition": true,
   "newPlayerInitialPosition": "farthest",
   "massLossRate": 0,

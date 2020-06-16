@@ -43,6 +43,7 @@ class PlayerController {
         }
         startTime: new Date().getTime();
         this.timeToGet= -1;
+        this.userPing = -1;
     }
 }
 

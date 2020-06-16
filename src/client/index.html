@@ -13,37 +13,33 @@
     <!-- Меню пользователя Нагуслаев Николай-->
     <div id="gameAreaWrapper">
         <canvas tabindex="1" id="cvs"></canvas>
-
     </div>
     <div>
         <button id="surveyBotton" style="visibility:hidden">Take Survey</button>
     </div>
     <div>
-        <p style="text-align:center;font-size:20px; color:blue; font-weight:bold;">In order to receive the credit, you need to survive 60 seconds, grow your cell to at least 125 points, and take the survey.</p>
-        <p style="text-align:center;font-size:20px; color:green; font-weight:bold;">If you can get more than 300 points, you will receive DOUBLE credit. hint: you can eat bot players :)</p>
-        <p style="text-align:center;font-size:20px; color:darkred; font-weight:bold;">Please be informed that if you are eaten by a bot player or your point is less than 125, you are not eligible to take the survey and so, you do not receive any credit.</p>
-        <p style="text-align:center;font-size:20px; color:Black; font-weight:bold;">You will receive an 8-character code if you finish the game successfully, please enter that code as the survey code in MTurk.</p>
-        <p style="text-align:center;font-size:20px; color:dodgerblue; font-weight:bold;">How To Play: Use arrow keys or WASD keys to move your cell.</p>
-
-
+        <p style="text-align:center;font-size:22px; color:Black; font-weight:bold;">IMPORTANT! please read the following information carefully.</p>
+        <p style="text-align:center;font-size:18px; color:Black; font-weight:bold;">1- In order to receive the credit, you need to survive 60 seconds, grow your cell to at least 125 points, and take the survey.</p>
+        <p style="text-align:center;font-size:18px; color:Black; font-weight:bold;">2- If you can get more than 300 points, you will receive DOUBLE credit. hint: you can eat bot players :)</p>
+        <p style="text-align:center;font-size:18px; color:Black; font-weight:bold;">3- Please be informed that if you are eaten by a bot player or your point is less than 125, you are not eligible to take the survey and so, you do not receive any credit.</p>
+        <p style="text-align:center;font-size:18px; color:Black; font-weight:bold;">4- You will receive an 8-character code if you finish the game successfully, please enter that code as the survey code in MTurk.</p>
+        <p style="text-align:center;font-size:18px; color:Black; font-weight:bold;">5- How To Play: Use arrow keys or WASD keys to move your cell.</p>
     </div>
 
     <div id="startMenuWrapper">
-
         <div id="startMenu">
             <p>Agar.io by KI14-06B</p>
-            
             <input type="text" tabindex="0" autofocus placeholder="Enter player name" id="playerNameInput" maxlength="25" />
             <b class="input-error">Invalid characters in player name</b>
             <br />
             <button id="startButton">Play</button>
-            <button id="spectateButton"style="visibility:hidden">Watch</button>
-
+            <!--<button id="spectateButton"style="visibility:hidden">Watch</button>-->
             <br />
             <!-- Модальное окно с инструкцией Рубан Анна-->
             <a href="#openModal" ><h2 class="ins">How to Play?</h2></a>
         </div>
     </div>
+
     <div id="openModal" class="modalDialog">
         <div>
             <a href="#close" title="Close" class="close">X</a>
@@ -59,7 +55,5 @@
     <!-- JS -->
     
     <script src="js/app.js"></script>
-
-
 </body>
 </html>

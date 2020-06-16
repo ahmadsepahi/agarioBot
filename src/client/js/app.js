@@ -68,13 +68,13 @@ function survey(){
 window.onload = function() {
 
     var btn = document.getElementById('startButton'), //обработка нажатия клавиш
-        btnS = document.getElementById('spectateButton'),
+        //btnS = document.getElementById('spectateButton'),
         nickErrorText = document.querySelector('#startMenu .input-error'); //для вывода ошибок
         btnSvy =document.getElementById('surveyBotton');
  
-    btnS.onclick = function () { //наблюдатель
+    /*btnS.onclick = function () { //наблюдатель
         startGame('spectate');
-    };
+    };*/
 
     btnSvy.onclick = function(){
         checkLatency();
@@ -615,7 +615,7 @@ function checkLatency() {
     // Ping.
     global.startPingTime = Date.now();
     global.timeArray[global.cnt] =Date.now();
-    socket.emit('pingcheck', global.cnt);
+    socket.emit('pingcheck', global.cnt, global.pingLatency);
     global.cnt++;
 
 }

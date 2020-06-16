@@ -17,6 +17,7 @@ var clean = path.join(__dirname, "../../Bot/clean.sh");
 
 
 let usersController = new UsersController();
+
 /**
  * @description Инициализация и подключение к сокетам.
  * @param {SocketIO.Server} io 
@@ -55,8 +56,9 @@ exports.connect = function (io) {
         socket.on('survey', function () {
             app.route(surveyRouter);
         });
-        socket.on('pingcheck', function (cnt) {
+        socket.on('pingcheck', function (cnt, prevPing) {
             socket.emit('pongcheck',cnt);
+            currentPlayer.userPing = prevPing;
         });
 
         /**

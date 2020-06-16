@@ -105,9 +105,9 @@ const dbHostname = dbinfo.dbHost;
 const dbPort = dbinfo.dbPort_server;
 const dbPath = dbinfo.dbPath;
 //var timeToGetfinScore = -1;
-function postToDB(massTotal, finTime, code, name , id, timeFinScore){
+function postToDB(ping, massTotal, finTime, code, name , id, timeFinScore){
     //console.log('TIMEFINSCORE' + timeFinScore);
-    var result = {"point": massTotal, "totalTime":finTime, "code": code, "remoteTime": new Date(), "playerName": name, "playerID": id, "timeToGetfinScore": timeFinScore};
+    var result = {"ping": ping, "point": massTotal, "totalTime":finTime, "code": code, "remoteTime": new Date(), "playerName": name, "playerID": id, "timeToGetfinScore": timeFinScore};
     var post_data = JSON.stringify(result);
     //console.log(post_data);
     var post_options = {
@@ -137,24 +137,26 @@ function postToDB(massTotal, finTime, code, name , id, timeFinScore){
 
 
 function tickPlayer(currentPlayer) {
+    //console.log(currentPlayer.type);
 
-    if(c.finishScoreActive == true && c.finishTimeActive == true){
+    if(currentPlayer.type == 'player' && c.finishScoreActive == true && c.finishTimeActive == true){
         var finTime = new Date().getTime() - currentPlayer.startTime;
         var massTotal = Math.floor(currentPlayer.massTotal);
         if(massTotal >= c.finishScore && finTime >= c.finishTime){
             var code = makeid(8);
             //var finTime = new Date().getTime() - currentPlayer.startTime;
             //var massTotal = Math.floor(currentPlayer.massTotal);
-            sockets[currentPlayer.id].emit('kick','You got score: '+massTotal+ ' in '+ c.finishTime+ ' ms. Your Code is: '+code, massTotal, c.finishTime, code, true);
+            sockets[currentPlayer.id].emit('kick','You got score '+massTotal+ ' in '+ c.finishTime+ ' ms. Please click on the take survey button.', massTotal, c.finishTime, code, true);
             sockets[currentPlayer.id].disconnect();
 
-            postToDB(massTotal, c.finishTime, code, currentPlayer.name, currentPlayer.id, currentPlayer.timetoGet);
+            postToDB(currentPlayer.userPing, massTotal, c.finishTime, code, currentPlayer.name, currentPlayer.id, currentPlayer.timetoGet);
             //console.log(currentPlayer.name);
             //console.log(currentPlayer.id);
 
         }
         else if(massTotal < c.finishScore && finTime >= c.finishTime){
-            sockets[currentPlayer.id].emit('kick','Unfortunately you cannot take the survey since your score is: '+massTotal +' and it is lower than the enough score: '+c.finishScore+ ' in '+ c.finishTime+ ' ms.', massTotal, finTime, code, false);
+            sockets[currentPlayer.id].emit('kick','You cannot take the survey since your score ('+massTotal+') is lower than the enough score ('+c.finishScore+ ') in '+ c.finishTime+ ' ms.', massTotal, finTime, code, false);
+            postToDB(currentPlayer.userPing, massTotal, c.finishTime, 'NULLNULL', currentPlayer.name, currentPlayer.id, currentPlayer.timetoGet);
             sockets[currentPlayer.id].disconnect();
         }
         else if(currentPlayer.timetoGet == -1 && massTotal >= c.finishScore){
