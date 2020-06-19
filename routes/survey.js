@@ -17,9 +17,17 @@ const dbPort = dbinfo.dbPort_client;
 const dbPath = dbinfo.dbPath;
 
 
-QUESTIONS={
+QUESTIONS1={
 
-    1: "Responsiveness: If a game is responsive, you should be able to control your subject smoothly with no perceived delay or unexpected behavior. Please rate how responsive you feel the game is."
+    1: "1- Responsiveness: If a game is responsive, you should be able to control your subject smoothly with no perceived delay or unexpected behavior. Please rate how responsive you feel the game is.",
+};
+QUESTIONS2={
+
+    2: "2- How well do you perform in the game?",
+};
+QUESTIONS3={
+
+    3: "3- What is your score range?"
 };
 
 
@@ -28,7 +36,7 @@ router.get('/:playerName/:ping/:point/:totalTime/:code', function(req, res){
     console.log(req.params.point);
     console.log(req.params.totalTime);*/
     //console.log(req);
-    res.render('question', { title: 'Survey', playerName: req.params.playerName, ping:req.params.ping, point: req.params.point,  totalTime:req.params.totalTime, code:req.params.code, questions:QUESTIONS});
+    res.render('question', { title: 'Survey', playerName: req.params.playerName, ping:req.params.ping, point: req.params.point,  totalTime:req.params.totalTime, code:req.params.code, questions1:QUESTIONS1, questions2:QUESTIONS2, questions3:QUESTIONS3});
 });
 
 router.post('/:playerName/:ping/:point/:totalTime/:code', function(req, res){
