@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# shellcheck disable=SC2034
 for i in {1..5}
 do
    #python3 ~/agarioBot/Bot/agario_main_bot.py &        #This is for IDE run

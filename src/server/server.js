@@ -12,6 +12,9 @@ var app = express();
 var http = require('http').Server(app);
 const io = require('socket.io')(http);
 var SAT = require('sat');
+var bodyParser = require('body-parser');
+var jsonParser = bodyParser.json();
+var urlencodeParser = bodyParser.urlencoded({extended: false});
 
 // Импорт настроек игры.
 var c = require('../../config.json');
@@ -25,35 +28,33 @@ var util = require('./lib/util');
 const httpDB = require('http');
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({extended: false}));
 
-var bodyParser = require('body-parser');
-var jsonParser = bodyParser.json();
-var urlencodeParser = bodyParser.urlencoded({ extended: false });
+
 app.use(urlencodeParser);
 app.use(jsonParser);
 
 var path = require('path');
 var cookieParser = require('cookie-parser');
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : {default: obj};
+}
 
 var surveyRouter = require("../../routes/survey");
 //console.log(__dirname);
 app.set('views', path.join(__dirname, "../../views"));
 app.set('view engine', 'pug');
 let QUESTIONS;
-QUESTIONS={
+QUESTIONS = {
     1: "1. Responsiveness: how responsive the game is"
 };
 app.use('/survey', surveyRouter);
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
-var bodyParser = require('body-parser');
-var jsonParser = bodyParser.json();
-var urlencodeParser = bodyParser.urlencoded({ extended: false });
+
 app.use(urlencodeParser);
 app.use(jsonParser);
 //
@@ -87,13 +88,13 @@ app.use(express.static(__dirname + '/../client'));
 
 /**
  * @description Проверка игрока.
- * @param {Object} currentPlayer текущий игрок.
+ * @param length
  */
 function makeid(length) {
-    var result           = '';
-    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     var charactersLength = characters.length;
-    for ( var i = 0; i < length; i++ ) {
+    for (var i = 0; i < length; i++) {
         result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
@@ -104,10 +105,20 @@ var dbinfo = c.mongoDBinfo;
 const dbHostname = dbinfo.dbHost;
 const dbPort = dbinfo.dbPort_server;
 const dbPath = dbinfo.dbPath;
+
 //var timeToGetfinScore = -1;
-function postToDB(ping, massTotal, finTime, code, name , id, timeFinScore){
+function postToDB(ping, massTotal, finTime, code, name, id, timeFinScore) {
     //console.log('TIMEFINSCORE' + timeFinScore);
-    var result = {"ping": ping, "point": massTotal, "totalTime":finTime, "code": code, "remoteTime": new Date(), "playerName": name, "playerID": id, "timeToGetfinScore": timeFinScore};
+    var result = {
+        "ping": ping,
+        "point": massTotal,
+        "totalTime": finTime,
+        "code": code,
+        "remoteTime": new Date(),
+        "playerName": name,
+        "playerID": id,
+        "timeToGetfinScore": timeFinScore
+    };
     var post_data = JSON.stringify(result);
     //console.log(post_data);
     var post_options = {
@@ -122,12 +133,12 @@ function postToDB(ping, massTotal, finTime, code, name , id, timeFinScore){
     };
 
     // Set up the request
-    var post_req = httpDB.request(post_options, function(resp) {
+    var post_req = httpDB.request(post_options, function (resp) {
         resp.setEncoding('utf8');
-/*        resp.on('data', function (chunk) {
-            // console.log('Response: ' + chunk);
-            res.redirect('/');
-        });*/
+        /*        resp.on('data', function (chunk) {
+                    // console.log('Response: ' + chunk);
+                    res.redirect('/');
+                });*/
     });
 
     // post the data
@@ -139,27 +150,25 @@ function postToDB(ping, massTotal, finTime, code, name , id, timeFinScore){
 function tickPlayer(currentPlayer) {
     //console.log(currentPlayer.type);
 
-    if(currentPlayer.type == 'player' && c.finishScoreActive == true && c.finishTimeActive == true){
+    if (currentPlayer.type === 'player' && c.finishScoreActive === true && c.finishTimeActive === true) {
         var finTime = new Date().getTime() - currentPlayer.startTime;
         var massTotal = Math.floor(currentPlayer.massTotal);
-        if(massTotal >= c.finishScore && finTime >= c.finishTime){
+        if (massTotal >= c.finishScore && finTime >= c.finishTime) {
             var code = makeid(8);
             //var finTime = new Date().getTime() - currentPlayer.startTime;
             //var massTotal = Math.floor(currentPlayer.massTotal);
-            sockets[currentPlayer.id].emit('kick','You got score '+massTotal+ ' in '+ c.finishTime+ ' ms. Please click on the take survey button.', massTotal, c.finishTime, code, true);
+            sockets[currentPlayer.id].emit('kick', 'You got score ' + massTotal + ' in ' + c.finishTime + ' ms. Please click on the take survey button.', massTotal, c.finishTime, code, true);
             sockets[currentPlayer.id].disconnect();
 
             postToDB(currentPlayer.userPing, massTotal, c.finishTime, code, currentPlayer.name, currentPlayer.id, currentPlayer.timetoGet);
             //console.log(currentPlayer.name);
             //console.log(currentPlayer.id);
 
-        }
-        else if(massTotal < c.finishScore && finTime >= c.finishTime){
-            sockets[currentPlayer.id].emit('kick','You cannot take the survey since your score ('+massTotal+') is lower than the enough score ('+c.finishScore+ ') in '+ c.finishTime+ ' ms.', massTotal, finTime, code, false);
+        } else if (massTotal < c.finishScore && finTime >= c.finishTime) {
+            sockets[currentPlayer.id].emit('kick', 'You cannot take the survey since your score (' + massTotal + ') is lower than the enough score (' + c.finishScore + ') in ' + c.finishTime + ' ms.', massTotal, finTime, code, false);
             postToDB(currentPlayer.userPing, massTotal, c.finishTime, 'NULLNULL', currentPlayer.name, currentPlayer.id, currentPlayer.timetoGet);
             sockets[currentPlayer.id].disconnect();
-        }
-        else if(currentPlayer.timetoGet == -1 && massTotal >= c.finishScore){
+        } else if (currentPlayer.timetoGet === -1 && massTotal >= c.finishScore) {
 
             currentPlayer.timetoGet = finTime;
             //console.log('TIMETIME' + currentPlayer.timetoGet);
@@ -202,7 +211,7 @@ function tickPlayer(currentPlayer) {
 
     function eatMass(m) {
         if (SAT.pointInCircle(new V(m.x, m.y), playerCircle)) {
-            if (m.id == currentPlayer.id && m.speed > 0 && z == m.num)
+            if (m.id === currentPlayer.id && m.speed > 0 && z === m.num)
                 return false;
             if (currentCell.mass > m.masa * 1.1)
                 return true;
@@ -266,11 +275,11 @@ function tickPlayer(currentPlayer) {
                     // Отсылаем всем другим игрокам о смерте игрока 2
 
                     global.sockets[collision.bUser.id].emit('RIP', 'Unfortunately you cannot take the survey due to Collision');
-/*                    if(currentPlayer.type ==='player'){
-                        var clean = path.join(__dirname, "../../Bot/clean.sh");
-                        const {spawn} = require('child_process');
-                        spawn('bash', [clean]);
-                    }*/
+                    /*                    if(currentPlayer.type ==='player'){
+                                            var clean = path.join(__dirname, "../../Bot/clean.sh");
+                                            const {spawn} = require('child_process');
+                                            spawn('bash', [clean]);
+                                        }*/
 
                 }
             }
@@ -278,7 +287,6 @@ function tickPlayer(currentPlayer) {
             // Игрок 1 после съедения игрока 2 получает его массу.
             currentPlayer.massTotal += collision.bUser.mass;
             collision.aUser.mass += collision.bUser.mass;
-
 
 
         }

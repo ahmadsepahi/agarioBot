@@ -33,7 +33,7 @@ exports.connect = function (io) {
 
         var type = socket.handshake.query.type;
         var radius = util.massToRadius(conf.defaultPlayerMass);
-        var position = conf.newPlayerInitialPosition == 'farthest' ? util.uniformPosition(usersController.getUsers(), radius) : util.randomPosition(radius);
+        var position = conf.newPlayerInitialPosition === 'farthest' ? util.uniformPosition(usersController.getUsers(), radius) : util.randomPosition(radius);
 
         var cells = [];
         var massTotal = 0;
@@ -76,7 +76,7 @@ exports.connect = function (io) {
                 global.sockets[player.id] = socket;
 
                 var radius = util.massToRadius(conf.defaultPlayerMass);
-                var position = conf.newPlayerInitialPosition == 'farthest' ? util.uniformPosition(usersController.getUsers(), radius) : util.randomPosition(radius);
+                var position = conf.newPlayerInitialPosition === 'farthest' ? util.uniformPosition(usersController.getUsers(), radius) : util.randomPosition(radius);
 
                 player.x = position.x;
                 player.y = position.y;
