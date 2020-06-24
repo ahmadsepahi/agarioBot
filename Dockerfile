@@ -23,3 +23,7 @@ ENTRYPOINT ["npm","start"]
 
 #Don't change this port unless you change the bot default port
 EXPOSE 3000
+
+#docker build -t ahmadsepahi/agariobot:1.0.3 .
+#docker push ahmadsepahi/agariobot:1.0.3
+#docker run -d -p 8080:3000 --name agariobot ahmadsepahi/agariobot:1.0.3
