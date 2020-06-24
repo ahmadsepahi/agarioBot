@@ -7,7 +7,8 @@ var playerNameInput = document.getElementById('playerNameInput'); //переме
 var socket;
 var reason;
 
-var pingInterval = 100;
+var pingInterval = 200;
+var checkPingFreq = 50;
 var finScore=0;
 var finTime=0;
 var lastPing = 0;
@@ -277,7 +278,7 @@ function setupSocket(socket) {
 
         if(Date.now() - global.gameStart > pingInterval ){
             checkLatency();
-            pingInterval *= 1.5;
+            //pingInterval *= 1.5;
             //checkPing();
         }
         //document.getElementById("surveyBotton").style.visibility="visible";
@@ -328,11 +329,11 @@ function drawFood(food) {
 // Отрисовка игроков Рубан Анна
 function drawPlayers(order) {
 
-    if(checkPing == true && global.cnt < 20 && Date.now() - lastPing > pingInterval){
+    if(checkPing == true && global.cnt < checkPingFreq && (Date.now() - lastPing) > pingInterval){
         checkLatency();
         lastPing = Date.now();
     }
-    else if(checkPing == true && global.cnt > 20) {
+    else if(checkPing == true && global.cnt >= checkPingFreq) {
         checkPing = false;
     }
 
